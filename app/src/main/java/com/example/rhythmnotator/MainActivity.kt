@@ -7,26 +7,26 @@ import android.view.View
 
 class MainActivity : AppCompatActivity() {
     val logTag = "MAIN ACTIVITY"
-
-    val recorder: Recorder = Recorder()
+    private lateinit var metronome: Metronome
+    private val recorder: Recorder = Recorder()
     var recording: ShortArray = ShortArray(0)
-    var silence: ShortArray = ShortArray(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        metronome = Metronome(this)
     }
 
     fun onStartClick(view: View) {
         recorder.start()
         recording = recorder.audioBuffer
-
-
     }
 
-    fun onRecordSilenceClick(view: View) {
-        recorder.start()
-        silence = recorder.audioBuffer
+    fun startMetronome(view: View) {
+        metronome.play()
+    }
+
+    fun stopMetronome(view: View) {
+        metronome.stop()
     }
 }

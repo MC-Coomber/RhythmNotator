@@ -55,7 +55,7 @@ class Recorder {
             )
         )
 
-        val audioProcessor = AudioProcessor(audioBuffer, sampleRate, 120)
+        val audioProcessor = AudioProcessor(audioBuffer, sampleRate, 80)
         audioProcessor.getNoteData()
     }
 

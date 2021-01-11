@@ -9,7 +9,7 @@ class AudioProcessor (audioData: ShortArray, sampleRate: Int, bpm: Int){
     private val sampleRate = sampleRate
     private val bpm = bpm
     private val barLength = 4
-    private val threshold = 500
+    private val threshold = 250
     private val logTag = "AUDIO"
 
     fun getNoteData() {
@@ -21,11 +21,8 @@ class AudioProcessor (audioData: ShortArray, sampleRate: Int, bpm: Int){
 
     private fun processAudio(audioBuffer: ShortArray): ArrayList<Int> {
         var iterator = 0
-        var sounds = 0
-        val threshold = 450
-        val noAverageSamples = 10
+        val noAverageSamples = 100
         var processedAudio = java.util.ArrayList<Int>()
-        Log.d(logTag, "Recording size: ${audioBuffer.size}")
 
         while(iterator < audioBuffer.size) {
             var newSample = abs(audioBuffer[iterator].toInt())
@@ -37,6 +34,11 @@ class AudioProcessor (audioData: ShortArray, sampleRate: Int, bpm: Int){
                 newSample = total/noAverageSamples
                 processedAudio.add(iterator, newSample)
             } else {
+//                var total = newSample
+//                for (i in 0..iterator) {
+//                    total += abs(audioBuffer[iterator - i].toInt())
+//                }
+//                newSample = total/noAverageSamples
                 processedAudio.add(iterator, newSample)
             }
             iterator++
