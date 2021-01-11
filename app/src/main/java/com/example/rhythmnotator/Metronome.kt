@@ -32,7 +32,9 @@ class Metronome(context: Context) {
         GlobalScope.launch {
             while (isPlaying) {
                 delay(interval.toLong())
-                soundPool.play(id, 1f, 1f, 1, 0, 1F)
+                if (isPlaying) {
+                    soundPool.play(id, 1f, 1f, 1, 0, 1F)
+                }
             }
         }
     }
