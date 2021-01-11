@@ -6,8 +6,8 @@ import kotlin.math.abs
 class AudioProcessor (audioData: ShortArray, sampleRate: Int, bpm: Int){
 
     private val audioData = audioData
-    private val sampleRate = sampleRate
-    private val bpm = bpm
+    private val sampleRate = MainActivity.sampleRate
+    private val bpm = MainActivity.bpm
     private val barLength = 4
     private val threshold = 250
     private val logTag = "AUDIO"

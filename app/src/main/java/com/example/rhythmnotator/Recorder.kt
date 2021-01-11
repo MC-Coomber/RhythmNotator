@@ -6,18 +6,20 @@ import android.util.Log
 import java.util.ArrayList
 import kotlin.math.abs
 
-class Recorder {
+class Recorder(private val metronome: Metronome) {
 
-    private var record: AudioRecord
+    var record: AudioRecord
     var audioBuffer: ShortArray
-    private val sampleRate = 4000
+    private val sampleRate = MainActivity.sampleRate
     private val logTag = "AUDIO"
-    private val recordTime = 4
+    //Recording time in seconds
+    private val recordTime =
+        (MainActivity.barsToRecordFor * MainActivity.beatsInABar) / (MainActivity.bpm / 60)
 
     init {
         // buffer size in bytes
-        var bufferSize =  sampleRate * recordTime
-
+        var bufferSize =  (sampleRate * recordTime) / 2
+        Log.d(logTag, "buffer size: $bufferSize time to record for: $recordTime")
         audioBuffer = ShortArray(bufferSize)
         record = AudioRecord(
             MediaRecorder.AudioSource.DEFAULT,
@@ -33,14 +35,15 @@ class Recorder {
 
     fun start() {
         record.startRecording()
+        metronome.start()
         Log.d(logTag, "Start recording")
         var shortsRead: Long = 0
         while (shortsRead <= audioBuffer.size) {
             val numberOfShort = record.read(audioBuffer, 0, audioBuffer.size)
             shortsRead += numberOfShort.toLong()
         }
-
         record.stop()
+        metronome.stop()
         Log.d(
             logTag,
             String.format(

@@ -9,9 +9,9 @@ import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 class Metronome(context: Context) {
-    var soundPool: SoundPool
+    private var soundPool: SoundPool
     private var id: Int
-    private val bpm = 100
+    private val bpm = MainActivity.RecordingConfig.bpm
     private val interval = 60000 / bpm
     private var isPlaying = false
 
@@ -27,7 +27,7 @@ class Metronome(context: Context) {
         id = soundPool.load(context, R.raw.click, 1)
     }
 
-    fun play() {
+    fun start() {
         isPlaying = true
         GlobalScope.launch {
             while (isPlaying) {
