@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.EditText
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val logTag = "MAIN ACTIVITY"
@@ -16,20 +18,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         metronome = Metronome(this)
         recorder = Recorder(metronome)
-        Log.d(logTag, "I'M HERE")
     }
 
     fun onStartClick(view: View) {
+        val inputBpm = bpm_input.text
+        val inputNumBars = bar_num_input.text
+        bpm = inputBpm.toString().toInt()
+        barsToRecordFor = inputNumBars.toString().toInt()
+
+        recorder.init()
         recorder.start()
         recording = recorder.audioBuffer
-    }
-
-    fun startMetronome(view: View) {
-        metronome.start()
-    }
-
-    fun stopMetronome(view: View) {
-        metronome.stop()
     }
 
     companion object RecordingConfig {
@@ -39,3 +38,4 @@ class MainActivity : AppCompatActivity() {
         var beatsInABar = 4
     }
 }
+

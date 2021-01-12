@@ -3,31 +3,32 @@ package com.example.rhythmnotator
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
+import android.util.Log
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 class Metronome(context: Context) {
-    private var soundPool: SoundPool
+    private val logTag = "METRONOME"
+    private var soundPool: SoundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .setAudioAttributes(
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+        )
+        .build()
     private var id: Int
-    private val bpm = MainActivity.RecordingConfig.bpm
-    private val interval = 60000 / bpm
     private var isPlaying = false
 
     init {
-        soundPool = SoundPool.Builder()
-            .setMaxStreams(4) // to prevent delaying the next tick under any circumstances
-            .setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            )
-            .build()
         id = soundPool.load(context, R.raw.click, 1)
     }
 
     fun start() {
+        val interval = 60000 / MainActivity.bpm
+
         isPlaying = true
         GlobalScope.launch {
             while (isPlaying) {

@@ -3,16 +3,18 @@ package com.example.rhythmnotator
 import android.util.Log
 import kotlin.math.abs
 
-class AudioProcessor (audioData: ShortArray, sampleRate: Int, bpm: Int){
+class AudioProcessor (audioData: ShortArray){
 
     private val audioData = audioData
     private val sampleRate = MainActivity.sampleRate
     private val bpm = MainActivity.bpm
-    private val barLength = 4
+    private val barLength = MainActivity.beatsInABar
     private val threshold = 250
     private val logTag = "AUDIO"
 
+
     fun getNoteData() {
+        Log.d(logTag, "bpm: $bpm sampleRate: $sampleRate")
         val processedAudio = processAudio(audioData)
         val buckets = createBuckets(processedAudio)
         val notes = parseBuckets(buckets)
@@ -34,11 +36,6 @@ class AudioProcessor (audioData: ShortArray, sampleRate: Int, bpm: Int){
                 newSample = total/noAverageSamples
                 processedAudio.add(iterator, newSample)
             } else {
-//                var total = newSample
-//                for (i in 0..iterator) {
-//                    total += abs(audioBuffer[iterator - i].toInt())
-//                }
-//                newSample = total/noAverageSamples
                 processedAudio.add(iterator, newSample)
             }
             iterator++

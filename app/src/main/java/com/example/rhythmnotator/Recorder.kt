@@ -7,23 +7,20 @@ import java.util.ArrayList
 import kotlin.math.abs
 
 class Recorder(private val metronome: Metronome) {
-
-    var record: AudioRecord
-    var audioBuffer: ShortArray
-    private val sampleRate = MainActivity.sampleRate
+    private lateinit var record: AudioRecord
+    lateinit var audioBuffer: ShortArray
     private val logTag = "AUDIO"
-    //Recording time in seconds
-    private val recordTime =
-        (MainActivity.barsToRecordFor * MainActivity.beatsInABar) / (MainActivity.bpm / 60)
 
-    init {
+    fun init() {
+        val recordTime =
+            (MainActivity.barsToRecordFor * MainActivity.beatsInABar) / (MainActivity.bpm / 60)
+
         // buffer size in bytes
-        var bufferSize =  (sampleRate * recordTime) / 2
-        Log.d(logTag, "buffer size: $bufferSize time to record for: $recordTime")
+        var bufferSize =  (MainActivity.sampleRate * recordTime) / 2
         audioBuffer = ShortArray(bufferSize)
         record = AudioRecord(
             MediaRecorder.AudioSource.DEFAULT,
-            sampleRate,
+            MainActivity.sampleRate,
             AudioFormat.CHANNEL_IN_MONO,
             AudioFormat.ENCODING_PCM_16BIT,
             bufferSize
@@ -58,7 +55,7 @@ class Recorder(private val metronome: Metronome) {
             )
         )
 
-        val audioProcessor = AudioProcessor(audioBuffer, sampleRate, 80)
+        val audioProcessor = AudioProcessor(audioBuffer)
         audioProcessor.getNoteData()
     }
 
