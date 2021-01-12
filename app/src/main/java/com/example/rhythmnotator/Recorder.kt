@@ -16,7 +16,7 @@ class Recorder(private val metronome: Metronome) {
             (MainActivity.barsToRecordFor * MainActivity.beatsInABar) / (MainActivity.bpm / 60)
 
         // buffer size in bytes
-        var bufferSize =  (MainActivity.sampleRate * recordTime) / 2
+        var bufferSize = MainActivity.sampleRate * recordTime
         audioBuffer = ShortArray(bufferSize)
         record = AudioRecord(
             MediaRecorder.AudioSource.DEFAULT,
@@ -31,11 +31,11 @@ class Recorder(private val metronome: Metronome) {
     }
 
     fun start() {
-        record.startRecording()
         metronome.start()
+        record.startRecording()
         Log.d(logTag, "Start recording")
         var shortsRead: Long = 0
-        while (shortsRead <= audioBuffer.size) {
+        while (shortsRead <= audioBuffer.size / 2) {
             val numberOfShort = record.read(audioBuffer, 0, audioBuffer.size)
             shortsRead += numberOfShort.toLong()
         }

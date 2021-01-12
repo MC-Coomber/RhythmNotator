@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object RecordingConfig {
         var bpm = 120
-        var sampleRate = 4000
+        var sampleRate = 44100
         var barsToRecordFor = 2
         var beatsInABar = 4
     }
