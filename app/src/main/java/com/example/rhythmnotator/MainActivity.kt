@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val logTag = "MAIN ACTIVITY"
@@ -27,8 +29,10 @@ class MainActivity : AppCompatActivity() {
         barsToRecordFor = inputNumBars.toString().toInt()
 
         recorder.init()
-        recorder.start()
-        recording = recorder.audioBuffer
+        GlobalScope.launch {
+            recorder.start()
+            recording = recorder.audioBuffer
+        }
     }
 
     companion object RecordingConfig {

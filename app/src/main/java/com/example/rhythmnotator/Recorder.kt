@@ -3,6 +3,9 @@ package com.example.rhythmnotator
 import android.media.*
 import android.os.Process
 import android.util.Log
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 import kotlin.math.abs
 
@@ -15,7 +18,6 @@ class Recorder(private val metronome: Metronome) {
         val recordTime =
             (MainActivity.barsToRecordFor * MainActivity.beatsInABar) / (MainActivity.bpm / 60)
 
-        // buffer size in bytes
         var bufferSize = MainActivity.sampleRate * recordTime
         audioBuffer = ShortArray(bufferSize)
         record = AudioRecord(
@@ -30,17 +32,19 @@ class Recorder(private val metronome: Metronome) {
         }
     }
 
-    fun start() {
-        metronome.start()
-        record.startRecording()
+    suspend fun start() {
+        metronome.playNumBars(1)
         Log.d(logTag, "Start recording")
+        record.startRecording()
         var shortsRead: Long = 0
+        metronome.start()
         while (shortsRead <= audioBuffer.size / 2) {
             val numberOfShort = record.read(audioBuffer, 0, audioBuffer.size)
             shortsRead += numberOfShort.toLong()
         }
         record.stop()
         metronome.stop()
+
         Log.d(
             logTag,
             String.format(

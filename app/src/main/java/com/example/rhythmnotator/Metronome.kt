@@ -3,13 +3,15 @@ package com.example.rhythmnotator
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
-import android.util.Log
+import android.os.VibrationEffect
+import android.os.Vibrator
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
+import org.jtransforms.fft.FloatFFT_1D
 
-class Metronome(context: Context) {
+
+class Metronome(private val context: Context) {
     private val logTag = "METRONOME"
     private var soundPool: SoundPool = SoundPool.Builder()
         .setMaxStreams(1)
@@ -26,15 +28,27 @@ class Metronome(context: Context) {
         id = soundPool.load(context, R.raw.click, 1)
     }
 
+    suspend fun playNumBars(bars: Int) {
+        val interval = 60000 / MainActivity.bpm
+        val beats = bars * MainActivity.beatsInABar
+        val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        for(i in 1..beats) {
+            delay(interval.toLong())
+            v.vibrate(VibrationEffect.createOneShot(50, 50))
+        }
+    }
+
     fun start() {
         val interval = 60000 / MainActivity.bpm
+        val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         isPlaying = true
         GlobalScope.launch {
             while (isPlaying) {
                 delay(interval.toLong())
                 if (isPlaying) {
-                    soundPool.play(id, 1f, 1f, 1, 0, 1F)
+                    v.vibrate(VibrationEffect.createOneShot(50, 50))
+//                    soundPool.play(id, 1f, 1f, 1, 0, 1F)
                 }
             }
         }

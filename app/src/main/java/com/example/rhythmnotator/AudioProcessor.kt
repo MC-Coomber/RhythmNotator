@@ -9,7 +9,7 @@ class AudioProcessor (audioData: ShortArray){
     private val sampleRate = MainActivity.sampleRate
     private val bpm = MainActivity.bpm
     private val barLength = MainActivity.beatsInABar
-    private val threshold = 250
+    private val threshold = 200
     private val logTag = "AUDIO"
 
 
@@ -47,8 +47,8 @@ class AudioProcessor (audioData: ShortArray){
     //Splits processed audio data into sixteenth note buckets
     private fun createBuckets(processedAudio: ArrayList<Int>): List<List<Int>> {
         val sixteenthSampleLength = 15 * (sampleRate/bpm)
-        Log.d(logTag, "bucket size: $sixteenthSampleLength")
-        return processedAudio.chunked(sixteenthSampleLength)
+        val buckets = processedAudio.chunked(sixteenthSampleLength)
+        return buckets.dropLast(1)
 
     }
 
