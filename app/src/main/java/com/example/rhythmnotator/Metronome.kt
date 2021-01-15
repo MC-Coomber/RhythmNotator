@@ -32,9 +32,12 @@ class Metronome(private val context: Context) {
         val interval = 60000 / MainActivity.bpm
         val beats = bars * MainActivity.beatsInABar
         val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        for(i in 1..beats) {
-            delay(interval.toLong())
-            v.vibrate(VibrationEffect.createOneShot(50, 50))
+        GlobalScope.launch {
+            for(i in 1..beats) {
+                delay(interval.toLong())
+                v.vibrate(VibrationEffect.createOneShot(50, 50))
+//                soundPool.play(id, 1f, 1f, 1, 0, 1F)
+            }
         }
     }
 

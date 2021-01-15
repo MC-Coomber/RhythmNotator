@@ -1,27 +1,36 @@
 package com.example.rhythmnotator
 
 import android.util.Log
+import org.jtransforms.fft.FloatFFT_1D
 import kotlin.math.abs
 
-class AudioProcessor (audioData: ShortArray){
 
-    private val audioData = audioData
+class AudioProcessor(private val audioBuffer: ShortArray, private val silenceBuffer: ShortArray){
+
     private val sampleRate = MainActivity.sampleRate
     private val bpm = MainActivity.bpm
     private val barLength = MainActivity.beatsInABar
-    private val threshold = 200
+    private val threshold = 250
     private val logTag = "AUDIO"
 
-
     fun getNoteData() {
-        Log.d(logTag, "bpm: $bpm sampleRate: $sampleRate")
-        val processedAudio = processAudio(audioData)
+        //Fetch the frequency range of the silence recording and filter it out from the audio buffer
+        val fftSilence = fourierTransform(silenceBuffer)
+        val frequencyRange = getFrequencyRange(fftSilence)
+
+        val fftAudioBuffer = fourierTransform(audioBuffer)
+        Log.d(logTag, "before: ${fftAudioBuffer.contentToString()}")
+        val fftSize = fftAudioBuffer.size/2
+        filterFrequencyRange(frequencyRange[0], frequencyRange[1], fftSize, fftAudioBuffer)
+
+        val processedAudio = processAudio(fftAudioBuffer)
         val buckets = createBuckets(processedAudio)
         val notes = parseBuckets(buckets)
         Log.d(logTag, "Note data: $notes")
+
     }
 
-    private fun processAudio(audioBuffer: ShortArray): ArrayList<Int> {
+    private fun processAudio(audioBuffer: FloatArray): ArrayList<Int> {
         var iterator = 0
         val noAverageSamples = 100
         var processedAudio = java.util.ArrayList<Int>()
@@ -55,12 +64,64 @@ class AudioProcessor (audioData: ShortArray){
     //Converts buckets into boolean values where true is a note and false is a rest
     private fun parseBuckets(buckets: List<List<Int>>): ArrayList<Boolean> {
         var notes = ArrayList<Boolean>()
+        Log.d(logTag, "num buckets: ${buckets.size}")
         for (bucket in buckets) {
             val average = bucket.average()
+            Log.d(logTag, "bucket: $average")
             notes.add(average > threshold)
         }
 
         return notes
+    }
+
+    private fun fourierTransform(buffer: ShortArray): FloatArray {
+        var fftResult = FloatArray(buffer.size)
+        buffer.forEachIndexed { index, sh ->
+            fftResult[index] = sh.toFloat()
+        }
+        val fftSize: Int = buffer.size / 2
+        val mFFT = FloatFFT_1D(fftSize.toLong()) //this is a jTransforms type
+        mFFT.realForward(fftResult)
+
+        return fftResult
+    }
+
+    private fun getFrequencyRange(fft: FloatArray): IntArray {
+        val maxFreqBin = fft.maxOrNull()!!
+        val indexOfMax = fft.indexOfFirst {
+            it == maxFreqBin
+        }
+        val maxFreq = (indexOfMax * MainActivity.sampleRate) / (fft.size / 2)
+
+        val minFreqBin = fft.minOrNull()!!
+        val indexOfMin = fft.indexOfFirst {
+            it == minFreqBin
+        }
+        val minFreq = (indexOfMin * MainActivity.sampleRate) / (fft.size / 2)
+
+        return intArrayOf(maxFreq, minFreq)
+    }
+
+    private fun filterFrequencyRange(maxFreq: Int, minFreq: Int, fftSize: Int, fft: FloatArray) {
+
+        Log.d(logTag, "max freq: $maxFreq lowest: $minFreq")
+        for (fftBin in 0 until fftSize) {
+            val frequency = fftBin.toFloat() * MainActivity.sampleRate / fftSize.toFloat()
+            if (frequency > minFreq || frequency < maxFreq) {
+
+                val real = 2 * fftBin
+                val imaginary = 2 * fftBin + 1
+
+                //zero out this frequency
+                fft[real] = 0F
+                fft[imaginary] = 0F
+            } else {
+                Log.d(logTag, "OUTSIDE OF RANGE")
+                Log.d(logTag, "frequency: $frequency")
+            }
+        }
+        val mFFT = FloatFFT_1D(fftSize.toLong())
+        mFFT.realInverseFull(fft, true)
     }
 
 }
