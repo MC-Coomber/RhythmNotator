@@ -10,7 +10,7 @@ class AudioProcessor(private val audioBuffer: ShortArray, private val silenceBuf
     private val sampleRate = MainActivity.sampleRate
     private val bpm = MainActivity.bpm
     private val barLength = MainActivity.beatsInABar
-    private val threshold = 250
+    private val threshold = 1000
     private val logTag = "AUDIO"
 
     fun getNoteData() {
@@ -105,9 +105,13 @@ class AudioProcessor(private val audioBuffer: ShortArray, private val silenceBuf
     private fun filterFrequencyRange(maxFreq: Int, minFreq: Int, fftSize: Int, fft: FloatArray) {
 
         Log.d(logTag, "max freq: $maxFreq lowest: $minFreq")
+        var maxFreqLocal = 0f
         for (fftBin in 0 until fftSize) {
             val frequency = fftBin.toFloat() * MainActivity.sampleRate / fftSize.toFloat()
-            if (frequency > minFreq || frequency < maxFreq) {
+            if (frequency > maxFreqLocal) {
+                maxFreqLocal = frequency
+            }
+            if (frequency < maxFreq || frequency > minFreq) {
 
                 val real = 2 * fftBin
                 val imaginary = 2 * fftBin + 1
@@ -115,13 +119,11 @@ class AudioProcessor(private val audioBuffer: ShortArray, private val silenceBuf
                 //zero out this frequency
                 fft[real] = 0F
                 fft[imaginary] = 0F
-            } else {
-                Log.d(logTag, "OUTSIDE OF RANGE")
-                Log.d(logTag, "frequency: $frequency")
             }
         }
+        Log.d(logTag, "max freqeuncy in buffer: $maxFreqLocal")
         val mFFT = FloatFFT_1D(fftSize.toLong())
-        mFFT.realInverseFull(fft, true)
+        mFFT.realInverse(fft, true)
     }
 
 }
