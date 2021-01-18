@@ -15,10 +15,12 @@ class Recorder(private val metronome: Metronome) {
     private val logTag = "AUDIO"
 
     fun init() {
-        val recordTime =
+        var recordTime =
             (MainActivity.barsToRecordFor * MainActivity.beatsInABar) / (MainActivity.bpm / 60)
+        var excessRecordTime = (1 / (MainActivity.bpm / 60)) * 2
+        var totalRecordTime: Int = recordTime + excessRecordTime
+        var bufferSize = MainActivity.sampleRate * totalRecordTime
 
-        var bufferSize = MainActivity.sampleRate * recordTime
         audioBuffer = ShortArray(bufferSize)
         record = AudioRecord(
             MediaRecorder.AudioSource.DEFAULT,
@@ -32,18 +34,21 @@ class Recorder(private val metronome: Metronome) {
         }
     }
 
+    private suspend fun countIn() {
+        metronome.playNumBarsBlocking(1)
+    }
+
     suspend fun start() {
-        metronome.playNumBars(1)
+        countIn()
         Log.d(logTag, "Start recording")
+        metronome.playNumBars(MainActivity.barsToRecordFor)
         record.startRecording()
         var shortsRead: Long = 0
-        metronome.start()
         while (shortsRead <= audioBuffer.size / 2) {
             val numberOfShort = record.read(audioBuffer, 0, audioBuffer.size)
             shortsRead += numberOfShort.toLong()
         }
         record.stop()
-        metronome.stop()
 
         Log.d(
             logTag,
@@ -55,10 +60,9 @@ class Recorder(private val metronome: Metronome) {
         Log.d(
             logTag,
             String.format(
-                "Max val:" + audioBuffer.max() + " Min val:" + audioBuffer.min()
+                "Max val:" + audioBuffer.maxOrNull() + " Min val:" + audioBuffer.minOrNull()
             )
         )
-
         val audioProcessor = AudioProcessor(audioBuffer)
         audioProcessor.getNoteData()
     }
