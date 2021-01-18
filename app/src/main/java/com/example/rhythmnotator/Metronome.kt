@@ -8,7 +8,6 @@ import android.os.Vibrator
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jtransforms.fft.FloatFFT_1D
 
 
 class Metronome(private val context: Context) {
@@ -28,13 +27,29 @@ class Metronome(private val context: Context) {
         id = soundPool.load(context, R.raw.click, 1)
     }
 
-    suspend fun playNumBars(bars: Int) {
+    suspend fun playNumBarsBlocking(bars: Int) {
         val interval = 60000 / MainActivity.bpm
         val beats = bars * MainActivity.beatsInABar
         val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
         for(i in 1..beats) {
             delay(interval.toLong())
-            v.vibrate(VibrationEffect.createOneShot(50, 50))
+            soundPool.play(id, 1f, 1f, 1, 0, 1F)
+//            v.vibrate(VibrationEffect.createOneShot(50, 100))
+        }
+    }
+
+    fun playNumBars(bars: Int) {
+        val interval = 60000 / MainActivity.bpm
+        val beats = bars * MainActivity.beatsInABar
+        val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+        GlobalScope.launch {
+            for(i in 1..beats) {
+                delay(interval.toLong())
+//                v.vibrate(VibrationEffect.createOneShot(50, 100))
+                soundPool.play(id, 1f, 1f, 1, 0, 1F)
+            }
         }
     }
 
@@ -47,8 +62,8 @@ class Metronome(private val context: Context) {
             while (isPlaying) {
                 delay(interval.toLong())
                 if (isPlaying) {
-                    v.vibrate(VibrationEffect.createOneShot(50, 50))
-//                    soundPool.play(id, 1f, 1f, 1, 0, 1F)
+//                    v.vibrate(VibrationEffect.createOneShot(50, 50))
+                    soundPool.play(id, 1f, 1f, 1, 0, 1F)
                 }
             }
         }
