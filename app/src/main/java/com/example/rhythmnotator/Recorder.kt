@@ -8,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 class Recorder(private val metronome: Metronome) {
     private lateinit var record: AudioRecord
@@ -17,8 +18,9 @@ class Recorder(private val metronome: Metronome) {
     fun init() {
         var recordTime =
             (MainActivity.barsToRecordFor * MainActivity.beatsInABar) / (MainActivity.bpm / 60)
-        var excessRecordTime = (1 / (MainActivity.bpm / 60)) * 2
-        var totalRecordTime: Int = recordTime + excessRecordTime
+        var excessRecordTime: Float = (1 / (MainActivity.bpm / 60F)) * 2
+        var totalRecordTime: Int = recordTime + excessRecordTime.roundToInt()
+        Log.d(logTag, "Time: $recordTime Excess: $excessRecordTime")
         var bufferSize = MainActivity.sampleRate * totalRecordTime
 
         audioBuffer = ShortArray(bufferSize)
