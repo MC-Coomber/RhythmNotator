@@ -34,8 +34,8 @@ class Metronome(private val context: Context) {
 
         for(i in 1..beats) {
             delay(interval.toLong())
-            soundPool.play(id, 1f, 1f, 1, 0, 1F)
-//            v.vibrate(VibrationEffect.createOneShot(50, 100))
+//            soundPool.play(id, 1f, 1f, 1, 0, 1F)
+            v.vibrate(VibrationEffect.createOneShot(50, 100))
         }
     }
 
@@ -47,8 +47,8 @@ class Metronome(private val context: Context) {
         GlobalScope.launch {
             for(i in 1..beats) {
                 delay(interval.toLong())
-//                v.vibrate(VibrationEffect.createOneShot(50, 100))
-                soundPool.play(id, 1f, 1f, 1, 0, 1F)
+                v.vibrate(VibrationEffect.createOneShot(50, 100))
+//                soundPool.play(id, 1f, 1f, 1, 0, 1F)
             }
         }
     }

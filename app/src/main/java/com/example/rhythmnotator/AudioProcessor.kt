@@ -3,22 +3,23 @@ package com.example.rhythmnotator
 import android.util.Log
 import kotlin.math.abs
 
-class AudioProcessor (private val audioData: ShortArray){
+class AudioProcessor (private val audioBuffer: ShortArray, private val silenceBuffer: ShortArray){
 
     private val sampleRate = MainActivity.sampleRate
     private val bpm = MainActivity.bpm
     private val barLength = MainActivity.beatsInABar
-    private val threshold = 200
+    private var threshold: Double = 0.0
     private val logTag = "AUDIO"
 
-
     fun getNoteData() {
-        Log.d(logTag, "bpm: $bpm sampleRate: $sampleRate")
-        val processedAudio = processAudio(audioData)
+        threshold = silenceBuffer.average()
+        Log.d(logTag, "threshold: $threshold")
+        val processedAudio = processAudio(audioBuffer)
         val buckets = createBuckets(processedAudio)
         val notes = parseBuckets(buckets)
         Log.d(logTag, "Note data: $notes")
     }
+
 
     private fun processAudio(audioBuffer: ShortArray): ArrayList<Int> {
         var iterator = 0

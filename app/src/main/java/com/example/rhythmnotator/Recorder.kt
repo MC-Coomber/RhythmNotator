@@ -13,6 +13,10 @@ import kotlin.math.roundToInt
 class Recorder(private val metronome: Metronome) {
     private lateinit var record: AudioRecord
     lateinit var audioBuffer: ShortArray
+
+    private lateinit var silenceRecorder: AudioRecord
+    lateinit var silenceBuffer: ShortArray
+
     private val logTag = "AUDIO"
 
     fun init() {
@@ -34,13 +38,35 @@ class Recorder(private val metronome: Metronome) {
         if (record.state != AudioRecord.STATE_INITIALIZED) {
             Log.e(logTag, "Audio Record can't initialize!")
         }
+
+        //Recording 'silence' for 1 bar
+        val silenceRecordTime = MainActivity.beatsInABar / (MainActivity.bpm / 60)
+        val silenceBufferSize = MainActivity.sampleRate * silenceRecordTime
+        Log.d(logTag, "Count in time: $silenceRecordTime")
+        silenceBuffer = ShortArray(bufferSize)
+        silenceRecorder = AudioRecord(
+            MediaRecorder.AudioSource.DEFAULT,
+            MainActivity.sampleRate,
+            AudioFormat.CHANNEL_IN_MONO,
+            AudioFormat.ENCODING_PCM_16BIT,
+            silenceBufferSize
+        )
     }
 
-    private suspend fun countIn() {
-        metronome.playNumBarsBlocking(1)
+    private fun countIn() {
+        Log.d(logTag, "Start Count in")
+        metronome.playNumBars(1)
+        silenceRecorder.startRecording()
+        var shortsRead: Long = 0
+        while (shortsRead <= silenceBuffer.size / 2) {
+            val numberOfShort = silenceRecorder.read(silenceBuffer, 0, silenceBuffer.size)
+            shortsRead += numberOfShort.toLong()
+        }
+        silenceRecorder.stop()
+        Log.d(logTag, "Count in stopped")
     }
 
-    suspend fun start() {
+    fun start() {
         countIn()
         Log.d(logTag, "Start recording")
         metronome.playNumBars(MainActivity.barsToRecordFor)
@@ -65,7 +91,7 @@ class Recorder(private val metronome: Metronome) {
                 "Max val:" + audioBuffer.maxOrNull() + " Min val:" + audioBuffer.minOrNull()
             )
         )
-        val audioProcessor = AudioProcessor(audioBuffer)
+        val audioProcessor = AudioProcessor(audioBuffer, silenceBuffer)
         audioProcessor.getNoteData()
     }
 
