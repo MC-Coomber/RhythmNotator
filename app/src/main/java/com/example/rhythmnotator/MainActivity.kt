@@ -36,8 +36,15 @@ class MainActivity : AppCompatActivity() {
 
         recorder.init()
         GlobalScope.launch {
-            recorder.start()
-            recording = recorder.audioBuffer
+            val recording = recorder.start()
+
+            val audioProcessor = AudioProcessor(recording)
+            val notes = audioProcessor.getNoteData()
+            val noteRenderer = NoteRenderer(note_holder, this@MainActivity)
+
+            runOnUiThread {
+                noteRenderer.renderNoteData(notes)
+            }
         }
     }
 

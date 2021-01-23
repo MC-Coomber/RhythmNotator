@@ -12,7 +12,7 @@ import kotlin.math.roundToInt
 
 class Recorder(private val metronome: Metronome) {
     private lateinit var record: AudioRecord
-    lateinit var audioBuffer: ShortArray
+    private lateinit var audioBuffer: ShortArray
     private val logTag = "AUDIO"
 
     fun init() {
@@ -40,7 +40,7 @@ class Recorder(private val metronome: Metronome) {
         metronome.playNumBarsBlocking(1)
     }
 
-    suspend fun start() {
+    suspend fun start(): ShortArray {
         countIn()
         Log.d(logTag, "Start recording")
         metronome.playNumBars(MainActivity.barsToRecordFor)
@@ -65,8 +65,8 @@ class Recorder(private val metronome: Metronome) {
                 "Max val:" + audioBuffer.maxOrNull() + " Min val:" + audioBuffer.minOrNull()
             )
         )
-        val audioProcessor = AudioProcessor(audioBuffer)
-        audioProcessor.getNoteData()
+
+        return audioBuffer
     }
 
 }

@@ -12,12 +12,14 @@ class AudioProcessor (private val audioData: ShortArray){
     private val logTag = "AUDIO"
 
 
-    fun getNoteData() {
+    fun getNoteData(): ArrayList<Boolean> {
         Log.d(logTag, "bpm: $bpm sampleRate: $sampleRate")
         val processedAudio = processAudio(audioData)
         val buckets = createBuckets(processedAudio)
         val notes = parseBuckets(buckets)
         Log.d(logTag, "Note data: $notes")
+
+        return notes
     }
 
     private fun processAudio(audioBuffer: ShortArray): ArrayList<Int> {
