@@ -23,9 +23,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         metronome = Metronome(this)
         recorder = Recorder(metronome)
-        val testNotes = arrayListOf(true, false, false, false, true, false, false, false, false, false, false, false)
-        val noteRenderer = NoteRenderer(testNotes, note_holder, this)
-        noteRenderer.renderNotes()
+        val testNotes = arrayListOf(true, false, true, false, true, false, false, false, false, false, false, false, true, false, true, false, true, false, false, false, false, false, false, false)
+        val noteRenderer = NoteRenderer(note_holder, this)
+        noteRenderer.renderNoteData(testNotes)
     }
 
     fun onStartClick(view: View) {
