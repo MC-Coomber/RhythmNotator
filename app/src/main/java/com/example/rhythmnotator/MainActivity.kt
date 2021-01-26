@@ -35,6 +35,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun onPlayClick(view: View) {
+        val playback = Playback(this)
+        val rhythm = arrayListOf(true, true, true, true, true, false, false, false, true, false, false, false ,true, false, false, false)
+
+        playback.playRhythm(200, rhythm)
+    }
+
     companion object RecordingConfig {
         var bpm = 120
         var sampleRate = 44100
