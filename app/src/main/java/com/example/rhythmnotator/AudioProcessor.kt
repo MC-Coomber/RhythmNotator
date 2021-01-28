@@ -12,7 +12,7 @@ class AudioProcessor (private val audioData: ShortArray){
     private val logTag = "AUDIO"
 
 
-    fun getNoteData(): ArrayList<Boolean> {
+    fun getNoteData(): List<Boolean> {
         Log.d(logTag, "bpm: $bpm sampleRate: $sampleRate")
         val processedAudio = processAudio(audioData)
         val buckets = createBuckets(processedAudio)
@@ -55,7 +55,7 @@ class AudioProcessor (private val audioData: ShortArray){
     }
 
     //Converts buckets into boolean values where true is a note and false is a rest
-    private fun parseBuckets(buckets: List<List<Int>>): ArrayList<Boolean> {
+    private fun parseBuckets(buckets: List<List<Int>>): List<Boolean> {
         var notes = ArrayList<Boolean>()
         for (bucket in buckets) {
             val average = bucket.average()
@@ -63,7 +63,7 @@ class AudioProcessor (private val audioData: ShortArray){
             notes.add(average > threshold)
         }
 
-        return notes
+        return notes.toList()
     }
 
 }

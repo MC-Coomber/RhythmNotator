@@ -9,6 +9,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
 
 class MainActivity : AppCompatActivity() {
@@ -23,9 +24,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         metronome = Metronome(this)
         recorder = Recorder(metronome)
-        val testNotes = arrayListOf(true, false, true, false, true, false, false, false, false, false, false, false, true, false, true, false, true, false, false, false, false, false, false, false)
-        val noteRenderer = NoteRenderer(note_holder, this)
-        noteRenderer.renderNoteData(testNotes)
     }
 
     fun onStartClick(view: View) {
@@ -87,8 +85,12 @@ class MainActivity : AppCompatActivity() {
             }
             val totalBeats = (beatsInABar * barsToRecordFor) * 4 //number of 16th notes recorded
             val bucketsFinal = buckets.drop(4).subList(0, totalBeats)
-
             Log.d(logTag, "BUTTON INPUT FINSIHED, BUCKETS: $bucketsFinal")
+
+            runOnUiThread {
+                val noteRenderer = NoteRenderer(note_holder, this@MainActivity)
+                noteRenderer.renderNoteData(bucketsFinal)
+            }
         }
     }
 
