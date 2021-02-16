@@ -1,13 +1,15 @@
 package com.example.rhythmnotator
 
+import android.content.Context
 import android.util.Log
 import kotlin.math.abs
 
-class AudioProcessor (private val audioData: ShortArray){
+class AudioProcessor (private val audioData: ShortArray, context: ExtendedContext){
 
-    private val sampleRate = MainActivity.sampleRate
-    private val bpm = MainActivity.bpm
-    private val barLength = MainActivity.beatsInABar
+    private val sampleRate = context.sampleRate
+    private val bpm = context.bpm
+    private val beatsInABar = context.beatsInABar
+    private val barsToRecordFor = context.barsToRecordFor
     private val threshold = 200
     private val logTag = "AUDIO"
 
@@ -49,7 +51,7 @@ class AudioProcessor (private val audioData: ShortArray){
     private fun createBuckets(processedAudio: ArrayList<Int>): List<List<Int>> {
         val sixteenthSampleLength = 15 * (sampleRate/bpm)
         val buckets = processedAudio.chunked(sixteenthSampleLength)
-        val totalBeats = (MainActivity.beatsInABar * MainActivity.barsToRecordFor) * 4 //number of 16th notes recorded
+        val totalBeats = (beatsInABar * barsToRecordFor) * 4 //number of 16th notes recorded
         return buckets.drop(4).subList(0, totalBeats)
 
     }

@@ -27,9 +27,9 @@ class Metronome(private val context: Context) {
         id = soundPool.load(context, R.raw.click, 1)
     }
 
-    suspend fun playNumBarsBlocking(bars: Int) {
-        val interval = 60000 / MainActivity.bpm
-        val beats = bars * MainActivity.beatsInABar
+    suspend fun playNumBarsBlocking(bars: Int, bpm: Int, beatsInABar: Int) {
+        val interval = 60000 / bpm
+        val beats = bars * beatsInABar
         val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         for(i in 1..beats) {
@@ -39,9 +39,9 @@ class Metronome(private val context: Context) {
         }
     }
 
-    fun playNumBars(bars: Int) {
-        val interval = 60000 / MainActivity.bpm
-        val beats = bars * MainActivity.beatsInABar
+    fun playNumBars(bars: Int, bpm: Int, beatsInABar: Int ) {
+        val interval = 60000 / bpm
+        val beats = bars * beatsInABar
         val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         GlobalScope.launch {
@@ -53,8 +53,8 @@ class Metronome(private val context: Context) {
         }
     }
 
-    fun start() {
-        val interval = 60000 / MainActivity.bpm
+    fun start(bpm: Int) {
+        val interval = 60000 / bpm
         val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         isPlaying = true
