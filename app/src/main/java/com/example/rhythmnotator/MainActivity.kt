@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, RecordFragment()).commit()
+
         bottom_nav.setOnNavigationItemSelectedListener {
             var selectedFragment = Fragment()
             when(it.itemId) {
