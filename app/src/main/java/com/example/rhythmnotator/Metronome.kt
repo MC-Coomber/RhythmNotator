@@ -20,12 +20,8 @@ class Metronome(private val context: Context) {
                 .build()
         )
         .build()
-    private var id: Int
+    private var id: Int = soundPool.load(context, R.raw.click, 1)
     private var isPlaying = false
-
-    init {
-        id = soundPool.load(context, R.raw.click, 1)
-    }
 
     suspend fun playNumBarsBlocking(bars: Int, bpm: Int, beatsInABar: Int) {
         val interval = 60000 / bpm

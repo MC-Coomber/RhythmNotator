@@ -1,6 +1,10 @@
 package com.example.rhythmnotator.fragments
 
+import android.content.Context
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.os.Bundle
+import android.os.Vibrator
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +23,6 @@ class RecordFragment : Fragment() {
     private val logTag = "RECORD FRAGMENT"
 
     private lateinit var recorder: Recorder
-    private lateinit var metronome: Metronome
 
     private var bpm = 60
     private var barsToRecordFor = 1
@@ -27,14 +30,22 @@ class RecordFragment : Fragment() {
 
     private var buttonTapped = false
 
+    private var soundPool: SoundPool = SoundPool.Builder()
+        .setMaxStreams(1)
+        .setAudioAttributes(
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+        )
+        .build()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val context = activity!!.applicationContext as ExtendedContext
-        metronome = Metronome(context)
-        recorder = Recorder(metronome, context)
+        recorder = Recorder(context)
 
         return inflater.inflate(R.layout.fragment_record, container, false)
     }
@@ -53,6 +64,8 @@ class RecordFragment : Fragment() {
 
             recorder.init()
             GlobalScope.launch {
+                playNumBarsBlocking(1, context.bpm, context.beatsInABar)
+                playNumBars(context.barsToRecordFor, context.bpm, context.beatsInABar)
                 val recording = recorder.start()
 
                 val context = activity!!.applicationContext as ExtendedContext
@@ -72,9 +85,9 @@ class RecordFragment : Fragment() {
         var i = 0F
         val buckets = ArrayList<Boolean>()
         GlobalScope.launch {
-            metronome.playNumBarsBlocking(1, bpm, beatsInABar)
+            playNumBarsBlocking(1, bpm, beatsInABar)
             Log.d(logTag, "Recording input")
-            metronome.playNumBars(barsToRecordFor, bpm, beatsInABar)
+            playNumBars(barsToRecordFor, bpm, beatsInABar)
             while (i < timeMillis) {
                 var input = false
                 val timer = Timer()
@@ -104,5 +117,34 @@ class RecordFragment : Fragment() {
 
     fun onInputButtonClick(view: View) {
         buttonTapped = true
+    }
+
+    //Metronome functions
+    private suspend fun playNumBarsBlocking(bars: Int, bpm: Int, beatsInABar: Int) {
+        val soundId = soundPool.load(context, R.raw.click, 1)
+        val interval = 60000 / bpm
+        val beats = bars * beatsInABar
+        val v = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+        for(i in 1..beats) {
+            delay(interval.toLong())
+            soundPool.play(soundId, 1f, 1f, 1, 0, 1F)
+//            v.vibrate(VibrationEffect.createOneShot(50, 100))
+        }
+    }
+
+    private fun playNumBars(bars: Int, bpm: Int, beatsInABar: Int ) {
+        val soundId = soundPool.load(context, R.raw.click, 1)
+        val interval = 60000 / bpm
+        val beats = bars * beatsInABar
+        val v = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+        GlobalScope.launch {
+            for(i in 1..beats) {
+                delay(interval.toLong())
+//                v.vibrate(VibrationEffect.createOneShot(50, 100))
+                soundPool.play(soundId, 1f, 1f, 1, 0, 1F)
+            }
+        }
     }
 }

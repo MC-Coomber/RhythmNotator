@@ -10,7 +10,7 @@ import java.util.ArrayList
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-class Recorder(private val metronome: Metronome, private val context: ExtendedContext) {
+class Recorder(private val context: ExtendedContext) {
     private lateinit var record: AudioRecord
     private lateinit var audioBuffer: ShortArray
     private val logTag = "AUDIO"
@@ -36,14 +36,8 @@ class Recorder(private val metronome: Metronome, private val context: ExtendedCo
         }
     }
 
-    private suspend fun countIn() {
-        metronome.playNumBarsBlocking(1, context.bpm, context.beatsInABar)
-    }
-
-    suspend fun start(): ShortArray {
-        countIn()
+    fun start(): ShortArray {
         Log.d(logTag, "Start recording")
-        metronome.playNumBars(context.barsToRecordFor, context.bpm, context.beatsInABar)
         record.startRecording()
         var shortsRead: Long = 0
         while (shortsRead <= audioBuffer.size / 2) {
