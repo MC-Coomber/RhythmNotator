@@ -1,6 +1,5 @@
 package com.example.rhythmnotator.fragments
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -33,31 +32,34 @@ class RecordFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        recorder = Recorder(metronome)
-        metronome = Metronome(activity!!.applicationContext)
+        val context = activity!!.applicationContext as ExtendedContext
+        metronome = Metronome(context)
+        recorder = Recorder(metronome, context)
+
         return inflater.inflate(R.layout.fragment_record, container, false)
     }
 
-    fun onStartClick(view: View) {
-        val inputBpm = bpm_input.text
-        val inputNumBars = bar_num_input.text
-        bpm = inputBpm.toString().toInt()
-        barsToRecordFor = inputNumBars.toString().toInt()
-        val context = activity!!.applicationContext as ExtendedContext
-        context.bpm = bpm
-        context.barsToRecordFor = barsToRecordFor
+    override fun onStart() {
+        super.onStart()
 
-        recorder.init()
-        GlobalScope.launch {
-            val recording = recorder.start()
+        start.setOnClickListener {
+            val inputBpm = bpm_input.text
+            val inputNumBars = bar_num_input.text
+            bpm = inputBpm.toString().toInt()
+            barsToRecordFor = inputNumBars.toString().toInt()
+            val context = activity!!.applicationContext as ExtendedContext
+            context.bpm = bpm
+            context.barsToRecordFor = barsToRecordFor
 
-            val audioProcessor = AudioProcessor(recording, activity!!.applicationContext as ExtendedContext)
-            val notes = audioProcessor.getNoteData()
-//            val noteRenderer = NoteRenderer(note_holder, this@MainActivity)
-//
-//            activity!!.runOnUiThread {
-//                noteRenderer.renderNoteData(notes)
-//            }
+            recorder.init()
+            GlobalScope.launch {
+                val recording = recorder.start()
+
+                val context = activity!!.applicationContext as ExtendedContext
+                val audioProcessor = AudioProcessor(recording, context)
+                val notes = audioProcessor.getNoteData()
+                context.currentNoteData = notes
+            }
         }
     }
 
@@ -95,10 +97,8 @@ class RecordFragment : Fragment() {
             val bucketsFinal = buckets.drop(4).subList(0, totalBeats)
             Log.d(logTag, "BUTTON INPUT FINSIHED, BUCKETS: $bucketsFinal")
 
-//            activity!!.runOnUiThread {
-//                val noteRenderer = NoteRenderer(note_holder, this@MainActivity)
-//                noteRenderer.renderNoteData(bucketsFinal)
-//            }
+            val context = activity!!.applicationContext as ExtendedContext
+            context.currentNoteData = bucketsFinal
         }
     }
 

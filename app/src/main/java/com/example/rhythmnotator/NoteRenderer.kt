@@ -26,7 +26,9 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
     )
 
     fun renderNoteData(noteData: List<Boolean>) {
-        val bucketsPerBar = MainActivity.beatsInABar * 4
+        val context = context as ExtendedContext
+
+        val bucketsPerBar = context.beatsInABar * 4
         val bars = noteData.chunked(bucketsPerBar)
         layout.removeAllViews()
         bars.forEach {

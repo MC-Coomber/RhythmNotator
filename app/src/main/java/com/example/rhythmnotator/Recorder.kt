@@ -10,23 +10,23 @@ import java.util.ArrayList
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-class Recorder(private val metronome: Metronome) {
+class Recorder(private val metronome: Metronome, private val context: ExtendedContext) {
     private lateinit var record: AudioRecord
     private lateinit var audioBuffer: ShortArray
     private val logTag = "AUDIO"
 
     fun init() {
         var recordTime =
-            (MainActivity.barsToRecordFor * MainActivity.beatsInABar) / (MainActivity.bpm / 60)
-        var excessRecordTime: Float = (1 / (MainActivity.bpm / 60F)) * 2
+            (context.barsToRecordFor * context.beatsInABar) / (context.bpm / 60)
+        var excessRecordTime: Float = (1 / (context.bpm / 60F)) * 2
         var totalRecordTime: Int = recordTime + excessRecordTime.roundToInt()
         Log.d(logTag, "Time: $recordTime Excess: $excessRecordTime")
-        var bufferSize = MainActivity.sampleRate * totalRecordTime
+        var bufferSize = context.sampleRate * totalRecordTime
 
         audioBuffer = ShortArray(bufferSize)
         record = AudioRecord(
             MediaRecorder.AudioSource.DEFAULT,
-            MainActivity.sampleRate,
+            context.sampleRate,
             AudioFormat.CHANNEL_IN_MONO,
             AudioFormat.ENCODING_PCM_16BIT,
             bufferSize
@@ -37,13 +37,13 @@ class Recorder(private val metronome: Metronome) {
     }
 
     private suspend fun countIn() {
-        metronome.playNumBarsBlocking(1)
+        metronome.playNumBarsBlocking(1, context.bpm, context.beatsInABar)
     }
 
     suspend fun start(): ShortArray {
         countIn()
         Log.d(logTag, "Start recording")
-        metronome.playNumBars(MainActivity.barsToRecordFor)
+        metronome.playNumBars(context.barsToRecordFor, context.bpm, context.beatsInABar)
         record.startRecording()
         var shortsRead: Long = 0
         while (shortsRead <= audioBuffer.size / 2) {

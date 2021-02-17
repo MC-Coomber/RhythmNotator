@@ -12,4 +12,8 @@ class ExtendedContext : Application() {
     var beatsInABar = defaultBeatsInABar
     var sampleRate =  44100
 
+    var currentNoteData = List<Boolean>(0) {
+        true
+    }
+
 }
