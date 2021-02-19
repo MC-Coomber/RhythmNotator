@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Number of bars to record for"
-        android:inputType="number" />
+        android:inputType="number"
+        android:text="1" />
 
     <EditText
         android:id="@+id/bpm_input"
@@ -19,7 +20,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Enter bpm"
-        android:inputType="number" />
+        android:inputType="number"
+        android:text="120" />
 
     <Button
         android:id="@+id/start"
