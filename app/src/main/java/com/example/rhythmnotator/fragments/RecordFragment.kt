@@ -73,6 +73,8 @@ class RecordFragment : Fragment() {
                 val notes = audioProcessor.getNoteData()
                 context.currentNoteData = notes
             }
+            val dialog = RecordDialog()
+            dialog.show(activity!!.supportFragmentManager, "Dialog")
         }
     }
 
