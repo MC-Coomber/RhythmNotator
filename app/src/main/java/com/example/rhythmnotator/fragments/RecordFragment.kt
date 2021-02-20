@@ -1,23 +1,13 @@
 package com.example.rhythmnotator.fragments
 
-import android.content.Context
-import android.media.AudioAttributes
-import android.media.SoundPool
 import android.os.Bundle
-import android.os.Vibrator
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.rhythmnotator.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.example.rhythmnotator.ExtendedContext
+import com.example.rhythmnotator.R
 import kotlinx.android.synthetic.main.fragment_record.*
-import kotlinx.coroutines.delay
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
 
 class RecordFragment : Fragment() {
     private val logTag = "RECORD FRAGMENT"

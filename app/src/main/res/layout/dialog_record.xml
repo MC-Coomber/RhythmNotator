@@ -13,12 +13,6 @@
         android:text="Recording"
         android:textSize="24sp" />
 
-    <Button
-        android:id="@+id/startrecord"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-
     <TextView
         android:id="@+id/countDisplay"
         android:layout_width="match_parent"
@@ -28,7 +22,7 @@
         android:textSize="36sp" />
 
     <Button
-        android:id="@+id/cancel"
+        android:id="@+id/cancel_dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cancel" />

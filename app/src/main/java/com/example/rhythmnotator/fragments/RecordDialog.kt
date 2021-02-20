@@ -9,12 +9,13 @@ import android.os.Bundle
 import android.os.Vibrator
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.rhythmnotator.AudioProcessor
 import com.example.rhythmnotator.ExtendedContext
 import com.example.rhythmnotator.R
 import com.example.rhythmnotator.Recorder
-import kotlinx.android.synthetic.main.dialog_record.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,9 +50,14 @@ class RecordDialog : DialogFragment() {
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    override fun onResume() {
-        super.onResume()
-        countDisplay.text
+    override fun onStart() {
+        super.onStart()
+        val cancelButton = this.dialog!!.findViewById<Button>(R.id.cancel_dialog)
+        cancelButton.setOnClickListener {
+            this.dismiss()
+        }
+
+        record()
     }
 
     private fun record() {
@@ -122,6 +128,8 @@ class RecordDialog : DialogFragment() {
         val beats = bars * beatsInABar
         val v = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
+        val countDisplay = this.dialog!!.findViewById<TextView>(R.id.countDisplay)
+
         for(i in 1..beats) {
             delay(interval.toLong())
             countDisplay.text = i.toString()
@@ -135,6 +143,8 @@ class RecordDialog : DialogFragment() {
         val interval = 60000 / bpm
         val beats = bars * beatsInABar
         val v = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+        val countDisplay = this.dialog!!.findViewById<TextView>(R.id.countDisplay)
 
         GlobalScope.launch {
             for(i in 1..beats) {
