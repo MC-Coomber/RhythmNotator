@@ -12,21 +12,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import com.example.rhythmnotator.AudioProcessor
-import com.example.rhythmnotator.ExtendedContext
-import com.example.rhythmnotator.R
-import com.example.rhythmnotator.Recorder
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.rhythmnotator.*
+import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlin.coroutines.CoroutineContext
 
 class RecordDialog : DialogFragment() {
     private val logTag = "RECORD FRAGMENT"
     private var buttonTapped = false
     private lateinit var recorder: Recorder
+    private val scope = MainScope()
 
     private var soundPool: SoundPool = SoundPool.Builder()
         .setMaxStreams(1)
@@ -53,26 +50,34 @@ class RecordDialog : DialogFragment() {
     override fun onStart() {
         super.onStart()
         val cancelButton = this.dialog!!.findViewById<Button>(R.id.cancel_dialog)
-        cancelButton.setOnClickListener {
-            this.dismiss()
+        val recordJob = scope.launch {
+            record()
         }
 
-        record()
+        recordJob.start()
+        cancelButton.setOnClickListener {
+            scope.cancel()
+            dismiss()
+        }
     }
 
-    private fun record() {
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
+    }
+
+    private suspend fun record() {
         val extendedContext = activity!!.applicationContext as ExtendedContext
 
         recorder.init()
-        GlobalScope.launch {
-            playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar)
-            playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar)
+        playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar)
+        playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar)
 
-            val recording = recorder.start()
-            val audioProcessor = AudioProcessor(recording, extendedContext)
-            val notes = audioProcessor.getNoteData()
-            extendedContext.currentNoteData = notes
-        }
+        val recording = recorder.start()
+        val audioProcessor = AudioProcessor(recording, extendedContext)
+        val notes = audioProcessor.getNoteData()
+        extendedContext.currentNoteData = notes
+        dismiss()
     }
 
 
@@ -132,8 +137,8 @@ class RecordDialog : DialogFragment() {
 
         for(i in 1..beats) {
             delay(interval.toLong())
-            countDisplay.text = i.toString()
             soundPool.play(soundId, 1f, 1f, 1, 0, 1F)
+            countDisplay.text = i.toString()
 //            v.vibrate(VibrationEffect.createOneShot(50, 100))
         }
     }
@@ -146,7 +151,7 @@ class RecordDialog : DialogFragment() {
 
         val countDisplay = this.dialog!!.findViewById<TextView>(R.id.countDisplay)
 
-        GlobalScope.launch {
+        scope.launch {
             for(i in 1..beats) {
                 delay(interval.toLong())
 //                v.vibrate(VibrationEffect.createOneShot(50, 100))
