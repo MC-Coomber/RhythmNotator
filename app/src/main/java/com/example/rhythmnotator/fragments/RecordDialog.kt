@@ -66,7 +66,7 @@ class RecordDialog : DialogFragment() {
         scope.cancel()
     }
 
-    private suspend fun record() {
+    private suspend fun record() = withContext(Dispatchers.Default) {
         val extendedContext = activity!!.applicationContext as ExtendedContext
 
         recorder.init()
@@ -127,13 +127,13 @@ class RecordDialog : DialogFragment() {
     }
 
     //Metronome functions
-    private suspend fun playNumBarsBlocking(bars: Int, bpm: Int, beatsInABar: Int) {
+    private suspend fun playNumBarsBlocking(bars: Int, bpm: Int, beatsInABar: Int) = withContext(Dispatchers.Default) {
         val soundId = soundPool.load(context, R.raw.click, 1)
         val interval = 60000 / bpm
         val beats = bars * beatsInABar
         val v = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-        val countDisplay = this.dialog!!.findViewById<TextView>(R.id.countDisplay)
+        val countDisplay = dialog!!.findViewById<TextView>(R.id.countDisplay)
 
         for(i in 1..beats) {
             delay(interval.toLong())
