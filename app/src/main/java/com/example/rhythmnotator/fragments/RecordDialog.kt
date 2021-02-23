@@ -56,12 +56,14 @@ class RecordDialog : DialogFragment() {
 
         recordJob.start()
         cancelButton.setOnClickListener {
+            recorder.stop()
             scope.cancel()
             dismiss()
         }
     }
 
     override fun onDestroy() {
+        recorder.stop()
         super.onDestroy()
         scope.cancel()
     }
@@ -74,9 +76,11 @@ class RecordDialog : DialogFragment() {
         playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar)
 
         val recording = recorder.start()
-        val audioProcessor = AudioProcessor(recording, extendedContext)
-        val notes = audioProcessor.getNoteData()
-        extendedContext.currentNoteData = notes
+        if (recording.isNotEmpty()) {
+            val audioProcessor = AudioProcessor(recording, extendedContext)
+            val notes = audioProcessor.getNoteData()
+            extendedContext.currentNoteData = notes        }
+
         dismiss()
     }
 

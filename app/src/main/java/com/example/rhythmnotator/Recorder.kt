@@ -14,6 +14,7 @@ class Recorder(private val context: ExtendedContext) {
     private lateinit var record: AudioRecord
     private lateinit var audioBuffer: ShortArray
     private val logTag = "AUDIO"
+    private var isRecording = false
 
     fun init() {
         var recordTime =
@@ -40,7 +41,8 @@ class Recorder(private val context: ExtendedContext) {
         Log.d(logTag, "Start recording")
         record.startRecording()
         var shortsRead: Long = 0
-        while (shortsRead <= audioBuffer.size / 2) {
+        isRecording = true
+        while (shortsRead <= audioBuffer.size / 2 && isRecording) {
             val numberOfShort = record.read(audioBuffer, 0, audioBuffer.size)
             shortsRead += numberOfShort.toLong()
         }
@@ -60,7 +62,18 @@ class Recorder(private val context: ExtendedContext) {
             )
         )
 
-        return audioBuffer
+
+        return if (isRecording) {
+            audioBuffer
+        } else {
+            //If recording is cancelled
+            Log.d(logTag, "Recording Cancelled")
+            ShortArray(0)
+        }
+    }
+
+    fun stop() {
+        isRecording = false
     }
 
 }
