@@ -26,20 +26,25 @@ class RecordFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val context = activity!!.applicationContext as ExtendedContext
 
         start.setOnClickListener {
-            val inputBpm = bpm_input.text
-            val inputNumBars = bar_num_input.text
-            bpm = inputBpm.toString().toInt()
-            barsToRecordFor = inputNumBars.toString().toInt()
+//            val inputBpm = bpm_input.value
+//            val inputNumBars = bar_num_input.text
+//            bpm = inputBpm.toString().toInt()
+//            barsToRecordFor = inputNumBars.toString().toInt()
 
-            val context = activity!!.applicationContext as ExtendedContext
             context.bpm = bpm
             context.barsToRecordFor = barsToRecordFor
 
             val dialog = RecordDialog()
             dialog.show(activity!!.supportFragmentManager, "Dialog")
         }
+
+        tempo_slider.valueFrom = 20F
+        tempo_slider.valueTo = 220F
+        tempo_slider.value = 120F
+        tempo_slider.stepSize = 1F
     }
 
 }
