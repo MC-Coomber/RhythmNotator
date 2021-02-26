@@ -12,6 +12,9 @@ class ExtendedContext : Application() {
     var beatsInABar = defaultBeatsInABar
     var sampleRate =  44100
 
+    var useTap = false
+    var useMetronomeVibrate = false
+
     var currentNoteData = List<Boolean>(0) {
         true
     }

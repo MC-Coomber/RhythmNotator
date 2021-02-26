@@ -3,4 +3,14 @@
     <string name="record">Record</string>
     <string name="playback">Playback</string>
     <string name="saved_rhythms">Saved Rhythms</string>
+    <string name="crotchet_beat">Crotchet beat</string>
+    <string name="equals">=</string>
+    <string name="metronome_vibration">Metronome vibration</string>
+    <string name="tap_input">Tap input</string>
+    <string name="bars_to_record_for">Bars to record for</string>
+    <string name="beats_per_bar">Beats per bar</string>
+    <string name="tap_here">Tap Here</string>
+    <string name="count_in">Counting you in...</string>
+    <string name="bar">Bar %d</string>
+    <string name="cancel">Cancel</string>
 </resources>

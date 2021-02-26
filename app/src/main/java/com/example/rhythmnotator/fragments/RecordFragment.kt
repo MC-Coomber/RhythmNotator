@@ -3,15 +3,14 @@ package com.example.rhythmnotator.fragments
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
-import android.opengl.Visibility
 import android.os.Bundle
+import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.rhythmnotator.AudioProcessor
 import com.example.rhythmnotator.ExtendedContext
@@ -19,7 +18,6 @@ import com.example.rhythmnotator.R
 import com.example.rhythmnotator.Recorder
 import com.example.rhythmnotator.databinding.FragmentRecordBinding
 import com.google.android.material.slider.LabelFormatter
-import com.google.android.material.slider.Slider
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -47,7 +45,7 @@ class RecordFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentRecordBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -61,11 +59,18 @@ class RecordFragment : Fragment() {
 
         //Initialize Start Button
         binding.start.setOnClickListener {
-            val recordJob = scope.launch {
-                record()
+            binding.start.text = getString(R.string.cancel)
+            if (binding.tapInputSwitch.isChecked) {
+                val recordTapJob = scope.launch {
+                    recordTaps()
+                }
+                recordTapJob.start()
+            } else {
+                val recordJob = scope.launch {
+                    record()
+                }
+                recordJob.start()
             }
-
-            recordJob.start()
         }
 
         //Initialize Bars to Record For button
@@ -93,6 +98,21 @@ class RecordFragment : Fragment() {
         binding.tempoSlider.value = context.bpm.toFloat()
         binding.tempoSlider.stepSize = 1F
 
+        //Initialize tap area
+        binding.tapInput.setOnClickListener {
+            buttonTapped = true
+        }
+
+        binding.tapInputSwitch.setOnCheckedChangeListener { _, isChecked ->
+            context.useTap = isChecked
+        }
+        binding.tapInputSwitch.isChecked = context.useTap
+
+        binding.metronomeVibrateSwitch.setOnCheckedChangeListener { _, isChecked ->
+            context.useMetronomeVibrate = isChecked
+        }
+        binding.metronomeVibrateSwitch.isChecked = context.useMetronomeVibrate
+
         binding.barNumDisplay.visibility = INVISIBLE
     }
 
@@ -100,14 +120,14 @@ class RecordFragment : Fragment() {
         recorder.stop()
         super.onPause()
         scope.cancel()
+        binding.start.text = getString(R.string.record)
     }
 
     private suspend fun record() = withContext(Dispatchers.Default) {
         val extendedContext = activity!!.applicationContext as ExtendedContext
-
         recorder.init()
-        playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar)
-        playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar)
+        playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
+        playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
 
         val recording = recorder.start()
         if (recording.isNotEmpty()) {
@@ -115,24 +135,27 @@ class RecordFragment : Fragment() {
             val notes = audioProcessor.getNoteData()
             extendedContext.currentNoteData = notes
         }
+        binding.start.text = getString(R.string.record)
     }
 
 
-    private fun onTapListenClick(view: View) {
-        val extendedContext = activity!!.applicationContext as ExtendedContext
+    private fun recordTaps() {
+        activity!!.runOnUiThread {
+            binding.tapInputContainer.visibility = VISIBLE
+        }
 
+        val extendedContext = activity!!.applicationContext as ExtendedContext
         val recordTime = (extendedContext.barsToRecordFor * extendedContext.beatsInABar) / (extendedContext.bpm / 60)
         val excessRecordTime = (1 / (extendedContext.bpm / 60F)) * 2
         val timeMillis = (recordTime + excessRecordTime) * 1000
         val sixteenthNoteTimeMillis = ((60F / extendedContext.bpm) / 4) * 1000
-        Log.d(logTag, "16th: $sixteenthNoteTimeMillis total: $timeMillis")
         var i = 0F
         val buckets = ArrayList<Boolean>()
-        GlobalScope.launch {
+        scope.launch {
             delay(500)
-            playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar)
+            playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
             Log.d(logTag, "Recording input")
-            playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar)
+            playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
             while (i < timeMillis) {
                 var input = false
                 val timer = Timer()
@@ -151,6 +174,11 @@ class RecordFragment : Fragment() {
                 timer.cancel()
                 i += sixteenthNoteTimeMillis
             }
+
+            activity!!.runOnUiThread {
+                binding.tapInputContainer.visibility = GONE
+                binding.start.text = getString(R.string.record)
+            }
             val totalBeats = (extendedContext.beatsInABar * extendedContext.barsToRecordFor) * 4 //number of 16th notes recorded
             val bucketsFinal = buckets.drop(4).subList(0, totalBeats)
             Log.d(logTag, "BUTTON INPUT FINSIHED, BUCKETS: $bucketsFinal")
@@ -159,12 +187,8 @@ class RecordFragment : Fragment() {
         }
     }
 
-    fun onInputButtonClick(view: View) {
-        buttonTapped = true
-    }
-
     //Metronome functions
-    private suspend fun playNumBarsBlocking(bars: Int, bpm: Int, beatsInABar: Int) = withContext(
+    private suspend fun playNumBarsBlocking(bars: Int, bpm: Int, beatsInABar: Int, useVibrate: Boolean) = withContext(
         Dispatchers.Default) {
         val soundId = soundPool.load(context, R.raw.click, 1)
         val interval = 60000 / bpm
@@ -173,18 +197,22 @@ class RecordFragment : Fragment() {
 
         activity!!.runOnUiThread {
             binding.barNumDisplay.visibility = VISIBLE
-            binding.barNumDisplay.text = "Counting you in..."
+            binding.barNumDisplay.text = getString(R.string.count_in)
         }
 
         for(i in 1..beats) {
             delay(interval.toLong())
-            soundPool.play(soundId, 1f, 1f, 1, 0, 1F)
             binding.countDisplay.text = i.toString()
-//            v.vibrate(VibrationEffect.createOneShot(50, 100))
+            if(useVibrate) {
+                v.vibrate(VibrationEffect.createOneShot(50, 100))
+            } else {
+                soundPool.play(soundId, 1f, 1f, 1, 0, 1F)
+            }
+
         }
     }
 
-    private fun playNumBars(bars: Int, bpm: Int, beatsInABar: Int ) {
+    private fun playNumBars(bars: Int, bpm: Int, beatsInABar: Int, useVibrate: Boolean) {
         val soundId = soundPool.load(context, R.raw.click, 1)
         val interval = 60000 / bpm
         val beats = bars * beatsInABar
@@ -196,18 +224,22 @@ class RecordFragment : Fragment() {
         scope.launch {
             for(i in 1..beats) {
                 delay(interval.toLong())
-//                v.vibrate(VibrationEffect.createOneShot(50, 100))
+
                 if ((displayVal - 1) % beatsInABar == 0){
                     displayVal = 1
                     barCount++
                 }
                 activity!!.runOnUiThread {
                     binding.countDisplay.text = displayVal.toString()
-                    binding.barNumDisplay.text = "Bar $barCount"
+                    binding.barNumDisplay.text = getString(R.string.bar, barCount)
                 }
 
                 displayVal++
-                soundPool.play(soundId, 1f, 1f, 1, 0, 1F)
+                if (useVibrate) {
+                    v.vibrate(VibrationEffect.createOneShot(50, 100))
+                } else {
+                    soundPool.play(soundId, 1f, 1f, 1, 0, 1F)
+                }
             }
         }
     }

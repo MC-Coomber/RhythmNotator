@@ -2,13 +2,14 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:animateLayoutChanges="true">
 
     <LinearLayout
+        android:id="@+id/metronome_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -55,7 +56,8 @@
                 android:layout_width="24dp"
                 android:layout_height="36dp"
                 android:cropToPadding="false"
-                app:srcCompat="@drawable/crotchet" />
+                app:srcCompat="@drawable/crotchet"
+                android:contentDescription="@string/crotchet_beat"/>
 
             <TextView
                 android:id="@+id/textView4"
@@ -63,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"
                 android:gravity="center"
-                android:text="="
+                android:text="@string/equals"
                 android:textSize="18sp" />
 
             <TextView
@@ -85,10 +87,10 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch1"
+                android:id="@+id/metronome_vibrate_switch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Metronome vibration" />
+                android:text="@string/metronome_vibration" />
 
         </LinearLayout>
 
@@ -97,10 +99,10 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch2"
+                android:id="@+id/tap_input_switch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Tap input" />
+                android:text="@string/tap_input" />
         </LinearLayout>
 
         <LinearLayout
@@ -115,7 +117,7 @@
                     android:id="@+id/textView11"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Bars to record for"
+                    android:text="@string/bars_to_record_for"
                     android:textAlignment="center"
                     android:textSize="18sp" />
 
@@ -137,7 +139,7 @@
                     android:id="@+id/textView9"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Beats per bar"
+                    android:text="@string/beats_per_bar"
                     android:textAlignment="center"
                     android:textSize="18sp" />
 
@@ -156,7 +158,25 @@
             android:id="@+id/start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Record" />
+            android:text="@string/record" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tap_input_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone"
+       >
+
+        <Button
+            android:id="@+id/tap_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:backgroundTint="@android:color/white"
+            android:text="@string/tap_here"
+            android:textColor="@android:color/black" />
     </LinearLayout>
 
 </LinearLayout>
