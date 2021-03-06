@@ -1,10 +1,16 @@
 package com.example.rhythmnotator
 
 import android.content.Context
+import android.util.Log
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.core.view.get
 
 class NoteRenderer (private val layout: LinearLayout, private val context: Context){
+    private val logTag = "NOTE RENDERER"
 
     private val noteMap = mapOf(
         listOf(false, false, false, false) to R.drawable.ffff,
@@ -26,31 +32,42 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
     )
 
     fun renderNoteData(noteData: List<Boolean>) {
-        val context = context as ExtendedContext
+        val extendedContext = context as ExtendedContext
 
-        val bucketsPerBar = context.beatsInABar * 4
+        val bucketsPerBar = extendedContext.beatsInABar * 4
         val bars = noteData.chunked(bucketsPerBar)
         layout.removeAllViews()
-        bars.forEach {
-            layout.addView(renderBar(it))
+
+        bars.forEachIndexed { index, list ->
+            if (index == 0) {
+                layout.addView(renderBar(list, isFirstBar = true))
+            } else {
+                layout.addView(renderBar(list, false))
+            }
         }
+
 
     }
 
-    private fun renderBar(bar: List<Boolean>): LinearLayout {
-        val quarterNotes = bar.chunked(4)
+    private fun renderBar(bar: List<Boolean>, isFirstBar: Boolean): LinearLayout {
+        val quarterDivisions = bar.chunked(4)
         val barLayout = LinearLayout(context)
+        barLayout.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         barLayout.orientation = LinearLayout.HORIZONTAL
 
-        quarterNotes.forEach {
-            barLayout.addView(getNoteImage(it))
+        quarterDivisions.forEach {
+            barLayout.addView(getNoteImage(it, barLayout))
         }
 
         return barLayout
     }
 
-    private fun getNoteImage(note: List<Boolean>): ImageView {
+    private fun getNoteImage(note: List<Boolean>, layout: LinearLayout): ImageView {
         val image = ImageView(context)
+        val density = layout.context.resources.displayMetrics.density
+        val params = LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)
+        params.marginEnd = (8 * density).toInt()
+        image.layoutParams = params
         val imageResource = noteMap[note] ?: error("CANNOT FIND GIVEN NOTE")
         image.setImageResource(imageResource)
 
