@@ -23,7 +23,7 @@ class PlaybackFragment : Fragment() {
 
     fun onPlayClick(view: View) {
         val playback = Playback(activity!!.applicationContext)
-        val rhythm = arrayListOf(true, true, true, true, true, false, false, false, true, false, false, false ,true, false, false, false)
+        val rhythm = arrayListOf(true, false, false, false, true, false, false, false, true, false, false, false ,true, false, false, false)
 
         playback.playRhythm(200, rhythm)
     }
@@ -32,7 +32,9 @@ class PlaybackFragment : Fragment() {
         super.onResume()
         val noteRenderer = NoteRenderer(note_holder, activity!!.applicationContext)
         val context = activity!!.applicationContext as ExtendedContext
-        noteRenderer.renderNoteData(context.currentNoteData)
+        val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false, true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false)
+
+        noteRenderer.renderNoteData(rhythm)
     }
 
 }

@@ -2,19 +2,20 @@ package com.example.rhythmnotator
 
 import android.content.Context
 import android.util.Log
+import android.view.Gravity
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.core.view.get
 
 class NoteRenderer (private val layout: LinearLayout, private val context: Context){
     private val logTag = "NOTE RENDERER"
 
     private val noteMap = mapOf(
         listOf(false, false, false, false) to R.drawable.ffff,
-        listOf(true, false, false, false) to R.drawable.tfff,
+        listOf(true, false, false, false) to R.drawable.ic_tfff,
         listOf(false, true, false, false) to R.drawable.ftff,
         listOf(false, false, true, false) to R.drawable.fftf,
         listOf(false, false, false, true) to R.drawable.ffft,
@@ -45,15 +46,32 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
                 layout.addView(renderBar(list, false))
             }
         }
-
-
     }
 
     private fun renderBar(bar: List<Boolean>, isFirstBar: Boolean): LinearLayout {
         val quarterDivisions = bar.chunked(4)
         val barLayout = LinearLayout(context)
-        barLayout.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+
+        val density = barLayout.context.resources.displayMetrics.density
+
+        barLayout.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, (138 * density).toInt())
         barLayout.orientation = LinearLayout.HORIZONTAL
+
+        if (isFirstBar) {
+            val stave = ImageView(context)
+            stave.setImageResource(R.drawable.ic_stave)
+            val staveDensity = stave.context.resources.displayMetrics.density
+            val params = FrameLayout.LayoutParams((staveDensity * 100).toInt(), (staveDensity * 100).toInt())
+            stave.layoutParams = params
+
+            val staveLayout = FrameLayout(context)
+            val layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+            staveLayout.layoutParams = layoutParams
+            layoutParams.gravity = Gravity.BOTTOM
+            staveLayout.addView(stave)
+
+            barLayout.addView(staveLayout)
+        }
 
         quarterDivisions.forEach {
             barLayout.addView(getNoteImage(it, barLayout))
@@ -66,7 +84,7 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
         val image = ImageView(context)
         val density = layout.context.resources.displayMetrics.density
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)
-        params.marginEnd = (8 * density).toInt()
+        params.marginEnd = (16 * density).toInt()
         image.layoutParams = params
         val imageResource = noteMap[note] ?: error("CANNOT FIND GIVEN NOTE")
         image.setImageResource(imageResource)
