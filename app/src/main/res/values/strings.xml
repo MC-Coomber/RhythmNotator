@@ -13,4 +13,5 @@
     <string name="count_in">Counting you in...</string>
     <string name="bar">Bar %d</string>
     <string name="cancel">Cancel</string>
+    <string name="play">Play</string>
 </resources>
