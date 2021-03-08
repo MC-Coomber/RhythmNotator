@@ -49,24 +49,32 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
     }
 
     private fun renderBar(bar: List<Boolean>, isFirstBar: Boolean): FrameLayout {
-        val quarterDivisions = bar.chunked(4)
         val barLayout = LinearLayout(context)
-
         val density = barLayout.context.resources.displayMetrics.density
         val barHeight = (138 * density).toInt()
+        barLayout.apply {
+            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, barHeight)
+            orientation = LinearLayout.HORIZONTAL
+        }
 
-        barLayout.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, barHeight)
-        barLayout.orientation = LinearLayout.HORIZONTAL
+        val keySignature = ImageView(context)
+        val keySignatureDensity = keySignature.context.resources.displayMetrics.density
+        val params = FrameLayout.LayoutParams((keySignatureDensity * 100).toInt(), (keySignatureDensity * 100).toInt())
+        keySignature.apply {
+            setImageResource(R.drawable.ic_stave)
+            layoutParams = params
+        }
 
+        val keySignatureLayout = FrameLayout(context)
+        val keySignatureLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        keySignatureLayoutParams.gravity = Gravity.BOTTOM
+        keySignatureLayout.apply {
+            layoutParams = keySignatureLayoutParams
+            addView(keySignature)
+        }
+
+        //Add the time signature if this bar is the first one
         if (isFirstBar) {
-            val stave = ImageView(context)
-            val staveDensity = stave.context.resources.displayMetrics.density
-            val params = FrameLayout.LayoutParams((staveDensity * 100).toInt(), (staveDensity * 100).toInt())
-            stave.apply {
-                setImageResource(R.drawable.ic_stave)
-                layoutParams = params
-            }
-
             val timeSignatureTextTop = TextView(context)
             timeSignatureTextTop.apply {
                 text = (context as ExtendedContext).beatsInABar.toString()
@@ -95,24 +103,15 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
                 addView(timeSignatureTextBottom)
             }
 
-            val staveLayout = FrameLayout(context)
-            val staveLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-            staveLayoutParams.gravity = Gravity.BOTTOM
-            staveLayout.apply {
-                layoutParams = staveLayoutParams
-                addView(stave)
-                addView(timeSignatureContainer)
-            }
-
-            barLayout.addView(staveLayout)
+            keySignatureLayout.addView(timeSignatureContainer)
         }
 
+        barLayout.addView(keySignatureLayout)
+
+        val quarterDivisions = bar.chunked(4)
         quarterDivisions.forEach {
             barLayout.addView(getNoteImage(it, barLayout))
         }
-
-        val frameLayout = FrameLayout(context)
-        frameLayout.addView(barLayout)
 
         val baseLine = LinearLayout(context)
         val baseLineParams = FrameLayout.LayoutParams(MATCH_PARENT, (density).toInt())
@@ -121,16 +120,21 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
             layoutParams = baseLineParams
             setBackgroundColor(Color.parseColor("#000000"))
         }
-        frameLayout.addView(baseLine)
 
-        return frameLayout
+        val barFrameLayout = FrameLayout(context)
+        barFrameLayout.apply {
+            addView(barLayout)
+            addView(baseLine)
+        }
+
+        return barFrameLayout
     }
 
     private fun getNoteImage(note: List<Boolean>, layout: LinearLayout): ImageView {
         val image = ImageView(context)
         val density = layout.context.resources.displayMetrics.density
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)
-        params.marginEnd = (24 * density).toInt()
+        params.marginEnd = (16 * density).toInt()
         image.layoutParams = params
         val imageResource = noteMap[note] ?: error("CANNOT FIND GIVEN NOTE")
         image.setImageResource(imageResource)
