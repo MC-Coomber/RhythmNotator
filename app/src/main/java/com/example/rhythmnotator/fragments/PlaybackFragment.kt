@@ -32,7 +32,8 @@ class PlaybackFragment : Fragment() {
         super.onResume()
         val noteRenderer = NoteRenderer(note_holder, activity!!.applicationContext)
         val context = activity!!.applicationContext as ExtendedContext
-        val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false, true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false)
+        val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
+            true, true, true, true, true, true, true, true, true, true, true, true ,true, true, true, true)
 
         noteRenderer.renderNoteData(rhythm)
     }

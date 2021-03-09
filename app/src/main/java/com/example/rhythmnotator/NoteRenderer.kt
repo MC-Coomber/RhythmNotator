@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.flexbox.*
 
 class NoteRenderer (private val layout: LinearLayout, private val context: Context){
     private val logTag = "NOTE RENDERER"
@@ -49,12 +50,12 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
     }
 
     private fun renderBar(bar: List<Boolean>, isFirstBar: Boolean): FrameLayout {
-        val barLayout = LinearLayout(context)
+        val barLayout = FlexboxLayout(context)
         val density = barLayout.context.resources.displayMetrics.density
         val barHeight = (138 * density).toInt()
         barLayout.apply {
-            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, barHeight)
-            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+            flexWrap = FlexWrap.WRAP
         }
 
         val keySignature = ImageView(context)
@@ -66,8 +67,8 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
         }
 
         val keySignatureLayout = FrameLayout(context)
-        val keySignatureLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        keySignatureLayoutParams.gravity = Gravity.BOTTOM
+        val keySignatureLayoutParams = FlexboxLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        keySignatureLayoutParams.alignSelf = AlignItems.FLEX_END
         keySignatureLayout.apply {
             layoutParams = keySignatureLayoutParams
             addView(keySignature)
@@ -108,33 +109,33 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
 
         barLayout.addView(keySignatureLayout)
 
+        //Draw the notes
         val quarterDivisions = bar.chunked(4)
         quarterDivisions.forEach {
             barLayout.addView(getNoteImage(it, barLayout))
         }
 
-        val baseLine = LinearLayout(context)
-        val baseLineParams = FrameLayout.LayoutParams(MATCH_PARENT, (density).toInt())
-        baseLineParams.topMargin = (barHeight / 2 + (density * 18)).toInt()
-        baseLine.apply {
-            layoutParams = baseLineParams
-            setBackgroundColor(Color.parseColor("#000000"))
-        }
+//        val baseLine = LinearLayout(context)
+//        val baseLineParams = FrameLayout.LayoutParams(MATCH_PARENT, (density* 4).toInt())
+//        baseLineParams.topMargin = (barHeight / 2 + (density * 18)).toInt()
+//        baseLine.apply {
+//            layoutParams = baseLineParams
+//            setBackgroundColor(Color.parseColor("#000000"))
+//        }
 
         val barFrameLayout = FrameLayout(context)
         barFrameLayout.apply {
             addView(barLayout)
-            addView(baseLine)
         }
 
         return barFrameLayout
     }
 
-    private fun getNoteImage(note: List<Boolean>, layout: LinearLayout): ImageView {
+    private fun getNoteImage(note: List<Boolean>, layout: FlexboxLayout): ImageView {
         val image = ImageView(context)
         val density = layout.context.resources.displayMetrics.density
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)
-        params.marginEnd = (16 * density).toInt()
+//        params.marginEnd = (8 * density).toInt()
         image.layoutParams = params
         val imageResource = noteMap[note] ?: error("CANNOT FIND GIVEN NOTE")
         image.setImageResource(imageResource)
