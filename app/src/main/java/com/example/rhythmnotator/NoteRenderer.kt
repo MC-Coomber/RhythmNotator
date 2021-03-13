@@ -52,23 +52,27 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
     private fun renderBar(bar: List<Boolean>, isFirstBar: Boolean): FrameLayout {
         val barLayout = FlexboxLayout(context)
         val density = barLayout.context.resources.displayMetrics.density
-        val barHeight = (138 * density).toInt()
+        val barHeight = (60 * density).toInt()
         barLayout.apply {
-            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-            flexWrap = FlexWrap.WRAP
+            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, barHeight)
+            justifyContent = JustifyContent.SPACE_EVENLY
+            alignItems = AlignItems.BASELINE
         }
 
         val keySignature = ImageView(context)
         val keySignatureDensity = keySignature.context.resources.displayMetrics.density
         val params = FrameLayout.LayoutParams((keySignatureDensity * 100).toInt(), (keySignatureDensity * 100).toInt())
         keySignature.apply {
-            setImageResource(R.drawable.ic_stave)
+            setImageResource(R.drawable.ic_key_signature)
             layoutParams = params
         }
 
-        val keySignatureLayout = FrameLayout(context)
+        val keySignatureLayout = LinearLayout(context)
         val keySignatureLayoutParams = FlexboxLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        keySignatureLayoutParams.alignSelf = AlignItems.FLEX_END
+        keySignatureLayoutParams.apply {
+            alignSelf = AlignItems.FLEX_END
+            marginStart = (density * -20).toInt()
+        }
         keySignatureLayout.apply {
             layoutParams = keySignatureLayoutParams
             addView(keySignature)
@@ -95,7 +99,8 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
             val timeSigContainerParams = FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
             timeSigContainerParams.apply {
                 topMargin = (density * 10).toInt()
-                marginStart = (density * 50).toInt()
+                marginStart = (density * -12).toInt()
+                marginEnd = (density * 26).toInt()
             }
             timeSignatureContainer.apply {
                 orientation = LinearLayout.VERTICAL
@@ -107,7 +112,8 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
             keySignatureLayout.addView(timeSignatureContainer)
         }
 
-        barLayout.addView(keySignatureLayout)
+        val parentLayout = LinearLayout(context)
+        parentLayout.addView(keySignatureLayout)
 
         //Draw the notes
         val quarterDivisions = bar.chunked(4)
@@ -115,17 +121,23 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
             barLayout.addView(getNoteImage(it, barLayout))
         }
 
-//        val baseLine = LinearLayout(context)
-//        val baseLineParams = FrameLayout.LayoutParams(MATCH_PARENT, (density* 4).toInt())
-//        baseLineParams.topMargin = (barHeight / 2 + (density * 18)).toInt()
-//        baseLine.apply {
-//            layoutParams = baseLineParams
-//            setBackgroundColor(Color.parseColor("#000000"))
-//        }
+        parentLayout.addView(barLayout)
+
+        val baseLine = LinearLayout(context)
+        val baseLineParams = FrameLayout.LayoutParams(MATCH_PARENT, (density * 1).toInt())
+        baseLineParams.topMargin = (density * 50).toInt()
+        baseLine.apply {
+            layoutParams = baseLineParams
+            setBackgroundColor(Color.parseColor("#000000"))
+        }
 
         val barFrameLayout = FrameLayout(context)
+        val barFrameLayoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        barFrameLayoutParams.bottomMargin = (density * 24).toInt()
         barFrameLayout.apply {
-            addView(barLayout)
+            addView(parentLayout)
+            addView(baseLine)
+            layoutParams = barFrameLayoutParams
         }
 
         return barFrameLayout
@@ -134,7 +146,7 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
     private fun getNoteImage(note: List<Boolean>, layout: FlexboxLayout): ImageView {
         val image = ImageView(context)
         val density = layout.context.resources.displayMetrics.density
-        val params = LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)
+        val params = LinearLayout.LayoutParams(WRAP_CONTENT, (density * 60).toInt())
 //        params.marginEnd = (8 * density).toInt()
         image.layoutParams = params
         val imageResource = noteMap[note] ?: error("CANNOT FIND GIVEN NOTE")
