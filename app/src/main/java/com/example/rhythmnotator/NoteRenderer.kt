@@ -16,7 +16,7 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
 
     private val noteMap = mapOf(
         listOf(false, false, false, false) to R.drawable.ffff,
-        listOf(true, false, false, false) to R.drawable.ic_tfff,
+        listOf(true, false, false, false) to R.drawable.tfff,
         listOf(false, true, false, false) to R.drawable.ftff,
         listOf(false, false, true, false) to R.drawable.fftf,
         listOf(false, false, false, true) to R.drawable.ffft,
@@ -55,7 +55,7 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
         val barHeight = (60 * density).toInt()
         barLayout.apply {
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, barHeight)
-            justifyContent = JustifyContent.SPACE_EVENLY
+            justifyContent = JustifyContent.SPACE_BETWEEN
             alignItems = AlignItems.BASELINE
         }
 

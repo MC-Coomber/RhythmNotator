@@ -3,21 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="8dp"
+    android:background="#d5d5d5"
     android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <LinearLayout
+            android:id="@+id/note_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:outlineProvider="bounds"
+            android:elevation="2dp"
+            android:padding="8dp"
+            android:background="#ffffff"
+            android:orientation="vertical"
+            tools:ignore="InefficientWeight" />
+    </ScrollView>
 
     <Button
         android:id="@+id/playback"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/play" />
-
-    <LinearLayout
-        android:id="@+id/note_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        tools:ignore="InefficientWeight" />
+        android:text="@string/play" />
 
 </LinearLayout>
