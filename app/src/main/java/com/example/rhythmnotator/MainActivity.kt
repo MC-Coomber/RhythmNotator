@@ -1,24 +1,14 @@
 package com.example.rhythmnotator
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.util.Log
-import android.view.View
-import android.widget.NumberPicker
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.rhythmnotator.fragments.PlaybackFragment
 import com.example.rhythmnotator.fragments.RecordFragment
-import com.example.rhythmnotator.fragments.SavedFragment
+import com.example.rhythmnotator.fragments.SavedRhythmsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_record.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
 
 class MainActivity : AppCompatActivity() {
     private val logTag = "MAIN ACTIVITY"
@@ -42,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.save_item -> {
-                    selectedFragment = SavedFragment()
+                    selectedFragment = SavedRhythmsFragment()
                     true
                 }
                 else -> false
