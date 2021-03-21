@@ -37,6 +37,10 @@ class PlaybackFragment : Fragment() {
 
             playback.playRhythm(120, rhythm)
         }
+
+        binding.save.setOnClickListener {
+
+        }
     }
 
     override fun onResume() {

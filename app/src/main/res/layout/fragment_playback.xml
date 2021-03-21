@@ -24,10 +24,26 @@
             tools:ignore="InefficientWeight" />
     </ScrollView>
 
-    <Button
-        android:id="@+id/playback"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/play" />
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/playback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/play"
+            android:layout_marginEnd="2dp"/>
+
+        <Button
+            android:id="@+id/save"
+            android:layout_marginStart="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save" />
+    </LinearLayout>
+
 
 </LinearLayout>
