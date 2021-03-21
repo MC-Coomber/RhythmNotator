@@ -7,19 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.rhythmnotator.ExtendedContext
-import com.example.rhythmnotator.databinding.BottomDialogBinding
+import com.example.rhythmnotator.databinding.DialogBottomBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BeatsPerBarDialogFragment(private val beatsPerBarDisplay: TextView) : BottomSheetDialogFragment() {
 
-    private lateinit var binding: BottomDialogBinding
+    private lateinit var binding: DialogBottomBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = BottomDialogBinding.inflate(inflater, container, false)
+        binding = DialogBottomBinding.inflate(inflater, container, false)
 
         return binding.root
     }
