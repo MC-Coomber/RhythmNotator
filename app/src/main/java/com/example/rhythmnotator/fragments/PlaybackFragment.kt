@@ -8,9 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.rhythmnotator.ExtendedContext
 import com.example.rhythmnotator.NoteRenderer
 import com.example.rhythmnotator.Playback
-import com.example.rhythmnotator.R
 import com.example.rhythmnotator.databinding.FragmentPlaybackBinding
-import com.example.rhythmnotator.databinding.FragmentRecordBinding
 import kotlinx.android.synthetic.main.fragment_playback.*
 
 class PlaybackFragment : Fragment() {
@@ -21,7 +19,7 @@ class PlaybackFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View?{
         binding = FragmentPlaybackBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -39,7 +37,8 @@ class PlaybackFragment : Fragment() {
         }
 
         binding.save.setOnClickListener {
-
+            val dialog = SaveDialogFragment()
+            dialog.show(activity!!.supportFragmentManager, "Dialog")
         }
     }
 
