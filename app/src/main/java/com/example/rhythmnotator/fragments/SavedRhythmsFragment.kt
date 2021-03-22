@@ -25,11 +25,11 @@ class SavedRhythmsFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val files = context?.fileList()
+        val files = context!!.fileList()
 
         binding.savedRhythmsList.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = SavedRhythmsListAdapter(files)
+            adapter = SavedRhythmsListAdapter(files, activity!!.applicationContext, activity!!)
         }
     }
 }

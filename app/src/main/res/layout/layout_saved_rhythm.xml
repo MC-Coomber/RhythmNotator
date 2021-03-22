@@ -28,6 +28,7 @@
         android:textSize="18sp" />
 
     <ImageView
+        android:id="@+id/rhythm_delete"
         android:layout_width="40dp"
         android:layout_height="match_parent"
         android:contentDescription="@string/delete_icon"
