@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.rhythmnotator.MainActivity
 import com.example.rhythmnotator.SavedRhythmsListAdapter
 import com.example.rhythmnotator.databinding.FragmentSavedRhythmsBinding
 
@@ -29,7 +30,9 @@ class SavedRhythmsFragment : Fragment() {
 
         binding.savedRhythmsList.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = SavedRhythmsListAdapter(files, activity!!.applicationContext, activity!!)
+            adapter = SavedRhythmsListAdapter(files, activity!!.applicationContext,
+                activity!! as MainActivity
+            )
         }
     }
 }

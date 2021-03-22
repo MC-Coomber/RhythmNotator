@@ -8,11 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rhythmnotator.fragments.SavedRhythmPlaybackDialog
 import java.io.File
 
-class SavedRhythmsListAdapter(private var rhythmNames: Array<String>, private val context: Context, private val actvity: Activity) : RecyclerView.Adapter<SavedRhythmsListAdapter.ViewHolder>() {
+class SavedRhythmsListAdapter(private var rhythmNames: Array<String>, private val context: Context, private val activity: MainActivity) : RecyclerView.Adapter<SavedRhythmsListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -24,9 +26,11 @@ class SavedRhythmsListAdapter(private var rhythmNames: Array<String>, private va
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val rhythmName = rhythmNames?.get(position)
         val file = File(context.filesDir, rhythmName)
+
         holder.rhythmNameText.text = rhythmName
+
         holder.deleteButton.setOnClickListener {
-            val confirmationDialog = actvity.let {
+            val confirmationDialog = activity.let {
                 AlertDialog.Builder(it)
             }
             confirmationDialog.setMessage("Are you sure you want to delete this rhythm?")
@@ -42,9 +46,14 @@ class SavedRhythmsListAdapter(private var rhythmNames: Array<String>, private va
             confirmationDialog.create()
             confirmationDialog.show()
         }
+
+        holder.parentLayout.setOnClickListener {
+            val dialog = SavedRhythmPlaybackDialog()
+            dialog.show(activity.supportFragmentManager, "Dialog")
+        }
     }
 
-    fun update(newData: Array<String>) {
+    private fun update(newData: Array<String>) {
         rhythmNames = newData
         notifyDataSetChanged()
     }
@@ -56,5 +65,6 @@ class SavedRhythmsListAdapter(private var rhythmNames: Array<String>, private va
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val rhythmNameText: TextView = itemView.findViewById(R.id.rhythm_name)
         val deleteButton: ImageView = itemView.findViewById(R.id.rhythm_delete)
+        val parentLayout: LinearLayout = itemView.findViewById(R.id.rhythm_parent)
     }
 }
