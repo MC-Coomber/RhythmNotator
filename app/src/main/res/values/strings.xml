@@ -17,4 +17,5 @@
     <string name="save">Save</string>
     <string name="save_a_rhythm">Save a Rhythm</string>
     <string name="rhythm_name">Rhythm name</string>
+    <string name="delete_icon">Delete icon</string>
 </resources>
