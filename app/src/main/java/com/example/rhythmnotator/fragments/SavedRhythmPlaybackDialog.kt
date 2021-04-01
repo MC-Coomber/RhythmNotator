@@ -10,6 +10,7 @@ import androidx.fragment.app.DialogFragment
 import com.example.rhythmnotator.R
 import com.example.rhythmnotator.databinding.DialogSavedPlaybackBinding
 import com.example.rhythmnotator.utils.NoteRenderer
+import com.example.rhythmnotator.utils.Playback
 import kotlinx.android.synthetic.main.dialog_saved_playback.*
 import java.io.File
 
@@ -17,6 +18,8 @@ class SavedRhythmPlaybackDialog(private val rhythmFile: File): DialogFragment() 
     private val logTag = "SAVED RHYTHM PLAYBACK"
 
     lateinit var binding: DialogSavedPlaybackBinding
+    private lateinit var playback: Playback
+
     private val rhythm: ArrayList<Boolean> = ArrayList<Boolean>()
     private var bpm: Int = 0
     private var beatsInABar: Int = 0
@@ -51,6 +54,36 @@ class SavedRhythmPlaybackDialog(private val rhythmFile: File): DialogFragment() 
             ViewGroup.LayoutParams.MATCH_PARENT
         )
 
+        readFile()
+
+        playback = Playback(activity!!.applicationContext)
+
+        var isPlaying = false
+        binding.dialogPlay.setOnClickListener {
+            val onComplete = {
+                isPlaying = false
+            }
+            if (!isPlaying) {
+                isPlaying = true
+                playback.playRhythm(bpm, rhythm, onComplete)
+            }
+        }
+
+        binding.dialogStop.setOnClickListener {
+            playback.stop()
+        }
+
+
+        val noteRenderer = NoteRenderer(binding.noteHolder, activity!!.applicationContext)
+        noteRenderer.renderNoteData(rhythm.toList())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        playback.stop()
+    }
+
+    private fun readFile() {
         val bufferedReader = rhythmFile.bufferedReader()
         val fileContents = bufferedReader.use {
             it.readText()
@@ -71,8 +104,5 @@ class SavedRhythmPlaybackDialog(private val rhythmFile: File): DialogFragment() 
         }
 
         Log.d(logTag, "bpm:$bpm beats in a bar:$beatsInABar rhythm: ${rhythm.joinToString(",")}")
-
-        val noteRenderer = NoteRenderer(binding.noteHolder, activity!!.applicationContext)
-        noteRenderer.renderNoteData(rhythm.toList())
     }
 }
