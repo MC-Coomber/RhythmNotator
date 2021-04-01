@@ -31,6 +31,7 @@ class RecordFragment : Fragment() {
     private var buttonTapped = false
     private lateinit var recorder: Recorder
     private val scope = MainScope()
+    private lateinit var recordJob: Job
 
     private var soundPool: SoundPool = SoundPool.Builder()
         .setMaxStreams(1)
@@ -58,19 +59,22 @@ class RecordFragment : Fragment() {
         recorder = Recorder(context)
 
         //Initialize Start Button
-        binding.start.setOnClickListener {
-            binding.start.text = getString(R.string.cancel)
+        binding.record.setOnClickListener {
             if (binding.tapInputSwitch.isChecked) {
-                val recordTapJob = scope.launch {
-                    recordTaps()
-                }
-                recordTapJob.start()
+                recordTaps()
             } else {
-                val recordJob = scope.launch {
+                recordJob = scope.launch {
                     record()
                 }
                 recordJob.start()
             }
+
+            flipButtonVisibility(true)
+        }
+
+        //Initialize Cancel Button
+        binding.cancel.setOnClickListener {
+            cancel()
         }
 
         //Initialize Bars to Record For button
@@ -117,10 +121,8 @@ class RecordFragment : Fragment() {
     }
 
     override fun onPause() {
-        recorder.stop()
         super.onPause()
-        scope.cancel()
-        binding.start.text = getString(R.string.record)
+        cancel()
     }
 
     private suspend fun record() = withContext(Dispatchers.Default) {
@@ -135,14 +137,32 @@ class RecordFragment : Fragment() {
             val notes = audioProcessor.getNoteData()
             extendedContext.currentNoteData = notes
         }
-        binding.start.text = getString(R.string.record)
+
+        flipButtonVisibility(false)
     }
 
+    private fun cancel() {
+        recorder.stop()
+        recordJob.cancelChildren()
+        binding.barNumDisplay.visibility = INVISIBLE
+        binding.countDisplay.text = "1"
+
+        binding.tapInputContainer.visibility = GONE
+        flipButtonVisibility(false)
+    }
+
+    private fun flipButtonVisibility(isRecording: Boolean) {
+        if (isRecording) {
+            binding.record.visibility = GONE
+            binding.cancel.visibility = VISIBLE
+        } else {
+            binding.record.visibility = VISIBLE
+            binding.cancel.visibility = GONE
+        }
+    }
 
     private fun recordTaps() {
-        activity!!.runOnUiThread {
-            binding.tapInputContainer.visibility = VISIBLE
-        }
+        binding.tapInputContainer.visibility = VISIBLE
 
         val extendedContext = activity!!.applicationContext as ExtendedContext
         val recordTime = (extendedContext.barsToRecordFor * extendedContext.beatsInABar) / (extendedContext.bpm / 60)
@@ -151,7 +171,8 @@ class RecordFragment : Fragment() {
         val sixteenthNoteTimeMillis = ((60F / extendedContext.bpm) / 4) * 1000
         var i = 0F
         val buckets = ArrayList<Boolean>()
-        scope.launch {
+
+        recordJob = scope.launch {
             delay(500)
             playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
             Log.d(logTag, "Recording input")
@@ -177,7 +198,7 @@ class RecordFragment : Fragment() {
 
             activity!!.runOnUiThread {
                 binding.tapInputContainer.visibility = GONE
-                binding.start.text = getString(R.string.record)
+                flipButtonVisibility(false)
             }
             val totalBeats = (extendedContext.beatsInABar * extendedContext.barsToRecordFor) * 4 //number of 16th notes recorded
             val bucketsFinal = buckets.drop(4).subList(0, totalBeats)
@@ -185,6 +206,7 @@ class RecordFragment : Fragment() {
 
             extendedContext.currentNoteData = bucketsFinal
         }
+        recordJob.start()
     }
 
     //Metronome functions
