@@ -1,6 +1,5 @@
-package com.example.rhythmnotator
+package com.example.rhythmnotator.utils
 
-import android.content.Context
 import android.util.Log
 import kotlin.math.abs
 
@@ -27,7 +26,7 @@ class AudioProcessor (private val audioData: ShortArray, context: ExtendedContex
     private fun processAudio(audioBuffer: ShortArray): ArrayList<Int> {
         var iterator = 0
         val noAverageSamples = 100
-        var processedAudio = java.util.ArrayList<Int>()
+        val processedAudio = java.util.ArrayList<Int>()
 
         while(iterator < audioBuffer.size) {
             var newSample = abs(audioBuffer[iterator].toInt())
@@ -58,7 +57,7 @@ class AudioProcessor (private val audioData: ShortArray, context: ExtendedContex
 
     //Converts buckets into boolean values where true is a note and false is a rest
     private fun parseBuckets(buckets: List<List<Int>>): List<Boolean> {
-        var notes = ArrayList<Boolean>()
+        val notes = ArrayList<Boolean>()
         for (bucket in buckets) {
             val average = bucket.average()
             Log.d(logTag, "bucket: $average")

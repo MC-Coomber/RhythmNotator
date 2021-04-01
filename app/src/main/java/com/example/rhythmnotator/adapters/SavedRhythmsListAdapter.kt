@@ -1,6 +1,5 @@
-package com.example.rhythmnotator
+package com.example.rhythmnotator.adapters
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -11,6 +10,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rhythmnotator.R
+import com.example.rhythmnotator.activities.MainActivity
 import com.example.rhythmnotator.fragments.SavedRhythmPlaybackDialog
 import java.io.File
 
@@ -24,7 +25,7 @@ class SavedRhythmsListAdapter(private var rhythmNames: Array<String>, private va
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val rhythmName = rhythmNames?.get(position)
+        val rhythmName = rhythmNames[position]
         val file = File(context.filesDir, rhythmName)
 
         holder.rhythmNameText.text = rhythmName
@@ -48,7 +49,7 @@ class SavedRhythmsListAdapter(private var rhythmNames: Array<String>, private va
         }
 
         holder.parentLayout.setOnClickListener {
-            val dialog = SavedRhythmPlaybackDialog()
+            val dialog = SavedRhythmPlaybackDialog(file)
             dialog.show(activity.supportFragmentManager, "Dialog")
         }
     }
@@ -59,7 +60,7 @@ class SavedRhythmsListAdapter(private var rhythmNames: Array<String>, private va
     }
 
     override fun getItemCount(): Int {
-        return rhythmNames!!.size
+        return rhythmNames.size
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

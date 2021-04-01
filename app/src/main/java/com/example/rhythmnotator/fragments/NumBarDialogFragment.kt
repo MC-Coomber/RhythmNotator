@@ -6,7 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.rhythmnotator.ExtendedContext
+import com.example.rhythmnotator.R
+import com.example.rhythmnotator.utils.ExtendedContext
 import com.example.rhythmnotator.databinding.DialogBottomBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -18,7 +19,7 @@ class NumBarDialogFragment(private val numBarDisplay: TextView) : BottomSheetDia
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DialogBottomBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -28,7 +29,7 @@ class NumBarDialogFragment(private val numBarDisplay: TextView) : BottomSheetDia
         super.onStart()
         val context = activity!!.applicationContext as ExtendedContext
 
-        binding.bottomDialogTitle.text = "Bars to Record For"
+        binding.bottomDialogTitle.text = getString(R.string.barsToRecordFor)
         binding.numPicker.minValue = 1
         binding.numPicker.maxValue = 10
         binding.numPicker.value = context.barsToRecordFor

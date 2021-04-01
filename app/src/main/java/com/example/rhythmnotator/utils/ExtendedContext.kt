@@ -1,4 +1,4 @@
-package com.example.rhythmnotator
+package com.example.rhythmnotator.utils
 
 import android.app.Application
 

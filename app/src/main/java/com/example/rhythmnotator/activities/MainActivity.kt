@@ -1,8 +1,9 @@
-package com.example.rhythmnotator
+package com.example.rhythmnotator.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.rhythmnotator.R
 import com.example.rhythmnotator.fragments.PlaybackFragment
 import com.example.rhythmnotator.fragments.RecordFragment
 import com.example.rhythmnotator.fragments.SavedRhythmsFragment
@@ -25,17 +26,13 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId) {
                 R.id.record_item -> {
                     selectedFragment = RecordFragment()
-                    true
                 }
                 R.id.playback_item -> {
                     selectedFragment = PlaybackFragment()
-                    true
                 }
                 R.id.save_item -> {
                     selectedFragment = SavedRhythmsFragment()
-                    true
                 }
-                else -> false
             }
             supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment).commit()
             return@setOnNavigationItemSelectedListener true

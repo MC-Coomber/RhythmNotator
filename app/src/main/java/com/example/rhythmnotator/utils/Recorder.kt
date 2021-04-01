@@ -1,13 +1,7 @@
-package com.example.rhythmnotator
+package com.example.rhythmnotator.utils
 
 import android.media.*
-import android.os.Process
 import android.util.Log
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.util.ArrayList
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 class Recorder(private val context: ExtendedContext) {
@@ -17,12 +11,12 @@ class Recorder(private val context: ExtendedContext) {
     private var isRecording = false
 
     fun init() {
-        var recordTime =
+        val recordTime =
             (context.barsToRecordFor * context.beatsInABar) / (context.bpm / 60)
-        var excessRecordTime: Float = (1 / (context.bpm / 60F)) * 2
-        var totalRecordTime: Int = recordTime + excessRecordTime.roundToInt()
+        val excessRecordTime: Float = (1 / (context.bpm / 60F)) * 2
+        val totalRecordTime: Int = recordTime + excessRecordTime.roundToInt()
         Log.d(logTag, "Time: $recordTime Excess: $excessRecordTime")
-        var bufferSize = context.sampleRate * totalRecordTime
+        val bufferSize = context.sampleRate * totalRecordTime
 
         audioBuffer = ShortArray(bufferSize)
         record = AudioRecord(

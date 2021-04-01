@@ -1,14 +1,14 @@
-package com.example.rhythmnotator
+package com.example.rhythmnotator.utils
 
 import android.content.Context
 import android.graphics.Color
-import android.view.Gravity
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.example.rhythmnotator.R
 import com.google.android.flexbox.*
 
 class NoteRenderer (private val layout: LinearLayout, private val context: Context){

@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.example.rhythmnotator.ExtendedContext
+import com.example.rhythmnotator.utils.ExtendedContext
 import com.example.rhythmnotator.databinding.DialogSaveBinding
 
 class SaveDialogFragment : DialogFragment() {

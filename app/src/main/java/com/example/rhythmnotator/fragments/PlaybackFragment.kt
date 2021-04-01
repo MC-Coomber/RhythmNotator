@@ -5,21 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.rhythmnotator.ExtendedContext
-import com.example.rhythmnotator.NoteRenderer
-import com.example.rhythmnotator.Playback
+import com.example.rhythmnotator.R
+import com.example.rhythmnotator.utils.ExtendedContext
+import com.example.rhythmnotator.utils.NoteRenderer
+import com.example.rhythmnotator.utils.Playback
 import com.example.rhythmnotator.databinding.FragmentPlaybackBinding
 import kotlinx.android.synthetic.main.fragment_playback.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class PlaybackFragment : Fragment() {
 
     private lateinit var binding: FragmentPlaybackBinding
+    private lateinit var playback: Playback
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View?{
+    ): View {
         binding = FragmentPlaybackBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -27,13 +31,24 @@ class PlaybackFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-
-        binding.playback.setOnClickListener {
-            val playback = Playback(activity!!.applicationContext)
+        playback = Playback(activity!!.applicationContext)
+        var isPlaying = false
+        binding.play.setOnClickListener {
             val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
                 true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true)
+            val onComplete = {
+                isPlaying = false
+            }
 
-            playback.playRhythm(120, rhythm)
+            if (!isPlaying) {
+                isPlaying = true
+                playback.playRhythm(120, rhythm, onComplete)
+
+            }
+        }
+
+        binding.stop.setOnClickListener {
+            playback.stop()
         }
 
         binding.save.setOnClickListener {
@@ -44,7 +59,7 @@ class PlaybackFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val noteRenderer = NoteRenderer(note_holder, activity!!.applicationContext)
+        val noteRenderer = NoteRenderer(binding.noteHolder, activity!!.applicationContext)
         val context = activity!!.applicationContext as ExtendedContext
         val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
@@ -53,6 +68,11 @@ class PlaybackFragment : Fragment() {
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true)
 
         noteRenderer.renderNoteData(rhythm)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        playback.stop()
     }
 
 }

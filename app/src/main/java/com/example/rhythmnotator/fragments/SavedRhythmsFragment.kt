@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.rhythmnotator.MainActivity
-import com.example.rhythmnotator.SavedRhythmsListAdapter
+import com.example.rhythmnotator.activities.MainActivity
+import com.example.rhythmnotator.adapters.SavedRhythmsListAdapter
 import com.example.rhythmnotator.databinding.FragmentSavedRhythmsBinding
 
 class SavedRhythmsFragment : Fragment() {
@@ -18,7 +18,7 @@ class SavedRhythmsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSavedRhythmsBinding.inflate(inflater, container, false)
 
         return binding.root

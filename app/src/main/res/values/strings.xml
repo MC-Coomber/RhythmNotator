@@ -10,7 +10,7 @@
     <string name="bars_to_record_for">Bars to record for</string>
     <string name="beats_per_bar">Beats per bar</string>
     <string name="tap_here">Tap Here</string>
-    <string name="count_in">Counting you in...</string>
+    <string name="count_in">Counting you in…</string>
     <string name="bar">Bar %d</string>
     <string name="cancel">Cancel</string>
     <string name="play">Play</string>
@@ -18,4 +18,7 @@
     <string name="save_a_rhythm">Save a Rhythm</string>
     <string name="rhythm_name">Rhythm name</string>
     <string name="delete_icon">Delete icon</string>
+    <string name="stop">Stop</string>
+    <string name="barsToRecordFor">Bars to Record For</string>
+    <string name="beatsPerBar">Beats Per Bar</string>
 </resources>

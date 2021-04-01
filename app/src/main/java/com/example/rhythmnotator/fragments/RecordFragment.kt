@@ -12,10 +12,10 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.rhythmnotator.AudioProcessor
-import com.example.rhythmnotator.ExtendedContext
+import com.example.rhythmnotator.utils.AudioProcessor
+import com.example.rhythmnotator.utils.ExtendedContext
 import com.example.rhythmnotator.R
-import com.example.rhythmnotator.Recorder
+import com.example.rhythmnotator.utils.Recorder
 import com.example.rhythmnotator.databinding.FragmentRecordBinding
 import com.google.android.material.slider.LabelFormatter
 import kotlinx.coroutines.*

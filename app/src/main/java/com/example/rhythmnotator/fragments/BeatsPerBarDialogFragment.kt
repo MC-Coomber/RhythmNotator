@@ -6,7 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.rhythmnotator.ExtendedContext
+import com.example.rhythmnotator.R
+import com.example.rhythmnotator.utils.ExtendedContext
 import com.example.rhythmnotator.databinding.DialogBottomBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -18,7 +19,7 @@ class BeatsPerBarDialogFragment(private val beatsPerBarDisplay: TextView) : Bott
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DialogBottomBinding.inflate(inflater, container, false)
 
         return binding.root
@@ -28,7 +29,7 @@ class BeatsPerBarDialogFragment(private val beatsPerBarDisplay: TextView) : Bott
         super.onStart()
         val context = activity!!.applicationContext as ExtendedContext
 
-        binding.bottomDialogTitle.text = "Beats Per Bar"
+        binding.bottomDialogTitle.text = getString(R.string.beatsPerBar)
         binding.numPicker.minValue = 2
         binding.numPicker.maxValue = 16
         binding.numPicker.value = context.beatsInABar
