@@ -31,7 +31,7 @@ class RecordFragment : Fragment() {
     private var buttonTapped = false
     private lateinit var recorder: Recorder
     private val scope = MainScope()
-    private lateinit var recordJob: Job
+    private var recordJob: Job = Job()
 
     private var soundPool: SoundPool = SoundPool.Builder()
         .setMaxStreams(1)
