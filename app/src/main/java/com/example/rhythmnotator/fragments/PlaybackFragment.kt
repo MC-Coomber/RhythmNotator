@@ -5,14 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.rhythmnotator.R
+import com.example.rhythmnotator.databinding.FragmentPlaybackBinding
 import com.example.rhythmnotator.utils.ExtendedContext
 import com.example.rhythmnotator.utils.NoteRenderer
 import com.example.rhythmnotator.utils.Playback
-import com.example.rhythmnotator.databinding.FragmentPlaybackBinding
-import kotlinx.android.synthetic.main.fragment_playback.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class PlaybackFragment : Fragment() {
 

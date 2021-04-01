@@ -5,13 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import com.example.rhythmnotator.R
 import com.example.rhythmnotator.databinding.DialogSavedPlaybackBinding
 import com.example.rhythmnotator.utils.NoteRenderer
 import com.example.rhythmnotator.utils.Playback
-import kotlinx.android.synthetic.main.dialog_saved_playback.*
 import java.io.File
 
 class SavedRhythmPlaybackDialog(private val rhythmFile: File): DialogFragment() {
@@ -37,7 +35,9 @@ class SavedRhythmPlaybackDialog(private val rhythmFile: File): DialogFragment() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.appbar.apply {
-            setNavigationOnClickListener { v -> dismiss() }
+            setNavigationOnClickListener {
+                dismiss()
+            }
             title = "Some Title"
         }
     }
