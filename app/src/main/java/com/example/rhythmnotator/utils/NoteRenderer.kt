@@ -2,6 +2,7 @@ package com.example.rhythmnotator.utils
 
 import android.content.Context
 import android.graphics.Color
+import android.view.Gravity
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
@@ -61,7 +62,8 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
 
         val keySignature = ImageView(context)
         val keySignatureDensity = keySignature.context.resources.displayMetrics.density
-        val params = FrameLayout.LayoutParams((keySignatureDensity * 100).toInt(), (keySignatureDensity * 100).toInt())
+        val params = FrameLayout.LayoutParams((keySignatureDensity * 70).toInt(), (keySignatureDensity * 40).toInt())
+        params.topMargin = barHeight / 2
         keySignature.apply {
             setImageResource(R.drawable.ic_key_signature)
             layoutParams = params
