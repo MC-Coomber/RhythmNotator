@@ -1,8 +1,11 @@
 package com.example.rhythmnotator.fragments
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.rhythmnotator.databinding.FragmentPlaybackBinding
@@ -58,13 +61,21 @@ class PlaybackFragment : Fragment() {
         val noteRenderer = NoteRenderer(binding.noteHolder, activity!!.applicationContext)
         val context = activity!!.applicationContext as ExtendedContext
 
+        if (context.currentNoteData.isEmpty()) {
+            binding.noteHolder.visibility = GONE
+            binding.playbackButtonHolder.visibility = GONE
+            binding.noRhythmMessage.visibility = VISIBLE
+        } else {
+            noteRenderer.renderNoteData(context.currentNoteData, context.recordedBpm)
+        }
+
         val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true)
 
-        noteRenderer.renderNoteData(context.currentNoteData, context.recordedBpm)
+
     }
 
     override fun onPause() {

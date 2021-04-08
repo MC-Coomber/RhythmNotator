@@ -23,4 +23,5 @@
     <string name="barsToRecordFor">Bars to Record For</string>
     <string name="beatsPerBar">Beats Per Bar</string>
     <string name="one">1</string>
+    <string name="no_rhythm_msg">Rhythms that you record will be displayed here. To record a rhythm, go to the record tab.</string>
 </resources>
