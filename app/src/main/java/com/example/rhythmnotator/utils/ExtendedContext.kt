@@ -3,7 +3,7 @@ package com.example.rhythmnotator.utils
 import android.app.Application
 
 class ExtendedContext : Application() {
-    private val defaultBpm = 60
+    private val defaultBpm = 120
     private val defaultBarsToRecordFor = 1
     private val defaultBeatsInABar = 4
 
