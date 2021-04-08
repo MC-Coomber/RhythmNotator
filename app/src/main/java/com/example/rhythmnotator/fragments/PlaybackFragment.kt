@@ -57,14 +57,14 @@ class PlaybackFragment : Fragment() {
         super.onResume()
         val noteRenderer = NoteRenderer(binding.noteHolder, activity!!.applicationContext)
         val context = activity!!.applicationContext as ExtendedContext
+
         val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true)
 
-        //TODO: pass actual bpm to note renderer
-        noteRenderer.renderNoteData(rhythm, 120)
+        noteRenderer.renderNoteData(context.currentNoteData, context.recordedBpm)
     }
 
     override fun onPause() {

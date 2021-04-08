@@ -136,9 +136,11 @@ class RecordFragment : Fragment() {
             val audioProcessor = AudioProcessor(recording, extendedContext)
             val notes = audioProcessor.getNoteData()
             extendedContext.currentNoteData = notes
+            extendedContext.recordedBpm = extendedContext.bpm
         }
-
-        flipButtonVisibility(false)
+        activity!!.runOnUiThread {
+            flipButtonVisibility(false)
+        }
     }
 
     private fun cancel() {
@@ -205,6 +207,7 @@ class RecordFragment : Fragment() {
             Log.d(logTag, "BUTTON INPUT FINSIHED, BUCKETS: $bucketsFinal")
 
             extendedContext.currentNoteData = bucketsFinal
+            extendedContext.recordedBpm = extendedContext.bpm
         }
         recordJob.start()
     }

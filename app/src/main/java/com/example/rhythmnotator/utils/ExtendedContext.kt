@@ -8,6 +8,7 @@ class ExtendedContext : Application() {
     private val defaultBeatsInABar = 4
 
     var bpm = defaultBpm
+    var recordedBpm = defaultBpm
     var barsToRecordFor = defaultBarsToRecordFor
     var beatsInABar = defaultBeatsInABar
     var sampleRate =  44100
