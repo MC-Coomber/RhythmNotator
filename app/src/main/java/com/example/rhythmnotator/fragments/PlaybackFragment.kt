@@ -63,7 +63,8 @@ class PlaybackFragment : Fragment() {
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
             true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true)
 
-        noteRenderer.renderNoteData(rhythm)
+        //TODO: pass actual bpm to note renderer
+        noteRenderer.renderNoteData(rhythm, 120)
     }
 
     override fun onPause() {

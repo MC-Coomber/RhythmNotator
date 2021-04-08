@@ -75,7 +75,7 @@ class SavedRhythmPlaybackDialog(private val rhythmFile: File): DialogFragment() 
 
 
         val noteRenderer = NoteRenderer(binding.noteHolder, activity!!.applicationContext)
-        noteRenderer.renderNoteData(rhythm.toList())
+        noteRenderer.renderNoteData(rhythm.toList(), bpm)
     }
 
     override fun onStop() {

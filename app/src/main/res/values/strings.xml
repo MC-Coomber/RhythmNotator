@@ -12,6 +12,7 @@
     <string name="tap_here">Tap Here</string>
     <string name="count_in">Counting you in…</string>
     <string name="bar">Bar %d</string>
+    <string name="bpm">= %d</string>
     <string name="cancel">Cancel</string>
     <string name="play">Play</string>
     <string name="save">Save</string>
