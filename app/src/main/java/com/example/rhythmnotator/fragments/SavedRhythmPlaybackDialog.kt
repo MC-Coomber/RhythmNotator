@@ -38,7 +38,7 @@ class SavedRhythmPlaybackDialog(private val rhythmFile: File): DialogFragment() 
             setNavigationOnClickListener {
                 dismiss()
             }
-            title = "Some Title"
+            title = rhythmFile.name
         }
     }
 
