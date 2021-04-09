@@ -32,9 +32,12 @@ class RecordFragment : Fragment() {
     private lateinit var binding: FragmentRecordBinding
 
     private var buttonTapped = false
+
     private lateinit var recorder: Recorder
+
     private val scope = MainScope()
     private var recordJob: Job = Job()
+    private var metronomeJob: Job = Job()
 
     private lateinit var v: Vibrator
 
@@ -141,27 +144,28 @@ class RecordFragment : Fragment() {
         playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
 
         val recording = recorder.start()
+        //If the recording has not been cancelled...
         if (recording.isNotEmpty()) {
             val audioProcessor = AudioProcessor(recording, extendedContext)
             val notes = audioProcessor.getNoteData()
             extendedContext.currentNoteData = notes
             extendedContext.recordedBpm = extendedContext.bpm
-        }
-        activity!!.runOnUiThread {
-            flipButtonVisibility(false)
-            showSuccessSnackbar()
+            activity!!.runOnUiThread {
+                flipButtonVisibility(false)
+                showSuccessSnackbar()
+            }
         }
     }
 
     private fun cancel() {
         recorder.stop()
-        recordJob.cancelChildren()
+        recordJob.cancel()
+        metronomeJob.cancel()
         binding.barNumDisplay.visibility = INVISIBLE
         binding.countDisplay.text = "1"
 
         binding.tapInputContainer.visibility = GONE
         flipButtonVisibility(false)
-        Toast.makeText(context, R.string.recordingCancelled, Toast.LENGTH_SHORT).show()
     }
 
     private fun flipButtonVisibility(isRecording: Boolean) {
@@ -183,8 +187,10 @@ class RecordFragment : Fragment() {
         snackbar.show()
     }
 
-    private fun recordTaps() {
-        binding.tapInputContainer.visibility = VISIBLE
+    private suspend fun recordTaps() = withContext(Dispatchers.Default) {
+        activity!!.runOnUiThread {
+            binding.tapInputContainer.visibility = VISIBLE
+        }
 
         val extendedContext = activity!!.applicationContext as ExtendedContext
         val recordTime = (extendedContext.barsToRecordFor * extendedContext.beatsInABar) / (extendedContext.bpm / 60)
@@ -194,43 +200,40 @@ class RecordFragment : Fragment() {
         var i = 0F
         val buckets = ArrayList<Boolean>()
 
-        recordJob = scope.launch {
-            delay(500)
-            playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
-            Log.d(logTag, "Recording input")
-            playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
-            while (i < timeMillis) {
-                var input = false
-                val timer = Timer()
-                timer.scheduleAtFixedRate(0, 10) {
-                    if (buttonTapped) {
-                        input = true
-                        buttonTapped = false
-                    }
+        delay(500)
+        playNumBarsBlocking(1, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
+        Log.d(logTag, "Recording input")
+        playNumBars(extendedContext.barsToRecordFor, extendedContext.bpm, extendedContext.beatsInABar, extendedContext.useMetronomeVibrate)
+        while (i < timeMillis) {
+            var input = false
+            val timer = Timer()
+            timer.scheduleAtFixedRate(0, 10) {
+                if (buttonTapped) {
+                    input = true
+                    buttonTapped = false
                 }
-                delay(sixteenthNoteTimeMillis.toLong())
-                if (input) {
-                    buckets.add(true)
-                } else {
-                    buckets.add(false)
-                }
-                timer.cancel()
-                i += sixteenthNoteTimeMillis
             }
-
-            activity!!.runOnUiThread {
-                binding.tapInputContainer.visibility = GONE
-                flipButtonVisibility(false)
-                showSuccessSnackbar()
+            delay(sixteenthNoteTimeMillis.toLong())
+            if (input) {
+                buckets.add(true)
+            } else {
+                buckets.add(false)
             }
-            val totalBeats = (extendedContext.beatsInABar * extendedContext.barsToRecordFor) * 4 //number of 16th notes recorded
-            val bucketsFinal = buckets.drop(4).subList(0, totalBeats)
-            Log.d(logTag, "BUTTON INPUT FINSIHED, BUCKETS: $bucketsFinal")
-
-            extendedContext.currentNoteData = bucketsFinal
-            extendedContext.recordedBpm = extendedContext.bpm
+            timer.cancel()
+            i += sixteenthNoteTimeMillis
         }
-        recordJob.start()
+
+        activity!!.runOnUiThread {
+            binding.tapInputContainer.visibility = GONE
+            flipButtonVisibility(false)
+            showSuccessSnackbar()
+        }
+        val totalBeats = (extendedContext.beatsInABar * extendedContext.barsToRecordFor) * 4 //number of 16th notes recorded
+        val bucketsFinal = buckets.drop(4).subList(0, totalBeats)
+        Log.d(logTag, "BUTTON INPUT FINSIHED, BUCKETS: $bucketsFinal")
+
+        extendedContext.currentNoteData = bucketsFinal
+        extendedContext.recordedBpm = extendedContext.bpm
     }
 
     //Metronome functions
@@ -265,7 +268,7 @@ class RecordFragment : Fragment() {
         var displayVal = 1
         var barCount = 0
 
-        scope.launch {
+        metronomeJob = scope.launch {
             for(i in 1..beats) {
                 delay(interval.toLong())
 
@@ -286,5 +289,6 @@ class RecordFragment : Fragment() {
                 }
             }
         }
+        metronomeJob.start()
     }
 }
