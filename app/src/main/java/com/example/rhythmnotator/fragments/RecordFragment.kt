@@ -33,6 +33,8 @@ class RecordFragment : Fragment() {
     private val scope = MainScope()
     private var recordJob: Job = Job()
 
+    private lateinit var v: Vibrator
+
     private var soundPool: SoundPool = SoundPool.Builder()
         .setMaxStreams(1)
         .setAudioAttributes(
@@ -57,6 +59,8 @@ class RecordFragment : Fragment() {
         val context = activity!!.applicationContext as ExtendedContext
 
         recorder = Recorder(context)
+
+        v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         //Initialize Start Button
         binding.record.setOnClickListener {
@@ -105,6 +109,7 @@ class RecordFragment : Fragment() {
         //Initialize tap area
         binding.tapInput.setOnClickListener {
             buttonTapped = true
+            v.vibrate(VibrationEffect.createOneShot(50, 100))
         }
 
         binding.tapInputSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -218,7 +223,6 @@ class RecordFragment : Fragment() {
         val soundId = soundPool.load(context, R.raw.click, 1)
         val interval = 60000 / bpm
         val beats = bars * beatsInABar
-        val v = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         activity!!.runOnUiThread {
             binding.barNumDisplay.visibility = VISIBLE
@@ -241,7 +245,6 @@ class RecordFragment : Fragment() {
         val soundId = soundPool.load(context, R.raw.click, 1)
         val interval = 60000 / bpm
         val beats = bars * beatsInABar
-        val v = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         var displayVal = 1
         var barCount = 0
