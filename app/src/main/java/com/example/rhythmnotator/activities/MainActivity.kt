@@ -23,21 +23,25 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, RecordFragment()).commit()
 
         binding.bottomNav.setOnNavigationItemSelectedListener {
-            var selectedFragment = Fragment()
-            when(it.itemId) {
-                R.id.record_item -> {
-                    selectedFragment = RecordFragment()
-                }
-                R.id.playback_item -> {
-                    selectedFragment = PlaybackFragment()
-                }
-                R.id.save_item -> {
-                    selectedFragment = SavedRhythmsFragment()
-                }
-            }
-            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment).commit()
-            return@setOnNavigationItemSelectedListener true
+            switchFragment(it.itemId)
         }
+    }
+
+    fun switchFragment(index: Int): Boolean {
+        var selectedFragment = Fragment()
+        when(index) {
+            R.id.record_item -> {
+                selectedFragment = RecordFragment()
+            }
+            R.id.playback_item -> {
+                selectedFragment = PlaybackFragment()
+            }
+            R.id.save_item -> {
+                selectedFragment = SavedRhythmsFragment()
+            }
+        }
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment).commit()
+        return true
     }
 }
 

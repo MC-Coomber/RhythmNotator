@@ -11,13 +11,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.rhythmnotator.utils.AudioProcessor
 import com.example.rhythmnotator.utils.ExtendedContext
 import com.example.rhythmnotator.R
+import com.example.rhythmnotator.activities.MainActivity
 import com.example.rhythmnotator.utils.Recorder
 import com.example.rhythmnotator.databinding.FragmentRecordBinding
 import com.google.android.material.slider.LabelFormatter
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -65,14 +68,15 @@ class RecordFragment : Fragment() {
         //Initialize Start Button
         binding.record.setOnClickListener {
             if (binding.tapInputSwitch.isChecked) {
-                recordTaps()
+                recordJob = scope.launch {
+                    recordTaps()
+                }
             } else {
                 recordJob = scope.launch {
                     record()
                 }
-                recordJob.start()
             }
-
+            recordJob.start()
             flipButtonVisibility(true)
         }
 
@@ -145,6 +149,7 @@ class RecordFragment : Fragment() {
         }
         activity!!.runOnUiThread {
             flipButtonVisibility(false)
+            showSuccessSnackbar()
         }
     }
 
@@ -156,6 +161,7 @@ class RecordFragment : Fragment() {
 
         binding.tapInputContainer.visibility = GONE
         flipButtonVisibility(false)
+        Toast.makeText(context, R.string.recordingCancelled, Toast.LENGTH_SHORT).show()
     }
 
     private fun flipButtonVisibility(isRecording: Boolean) {
@@ -166,6 +172,15 @@ class RecordFragment : Fragment() {
             binding.record.visibility = VISIBLE
             binding.cancel.visibility = GONE
         }
+    }
+
+    private fun showSuccessSnackbar() {
+        val snackbar = Snackbar.make(binding.recordParent, "Recording finished", Snackbar.LENGTH_LONG)
+            .setAction(R.string.view) {
+                val activity = activity as MainActivity
+                activity.switchFragment(R.id.playback_item)
+            }
+        snackbar.show()
     }
 
     private fun recordTaps() {
@@ -206,6 +221,7 @@ class RecordFragment : Fragment() {
             activity!!.runOnUiThread {
                 binding.tapInputContainer.visibility = GONE
                 flipButtonVisibility(false)
+                showSuccessSnackbar()
             }
             val totalBeats = (extendedContext.beatsInABar * extendedContext.barsToRecordFor) * 4 //number of 16th notes recorded
             val bucketsFinal = buckets.drop(4).subList(0, totalBeats)
