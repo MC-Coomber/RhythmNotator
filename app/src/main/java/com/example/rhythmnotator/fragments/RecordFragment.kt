@@ -32,6 +32,7 @@ class RecordFragment : Fragment() {
     private lateinit var binding: FragmentRecordBinding
 
     private var buttonTapped = false
+    private var isRecording = false
 
     private lateinit var recorder: Recorder
 
@@ -70,6 +71,7 @@ class RecordFragment : Fragment() {
 
         //Initialize Start Button
         binding.record.setOnClickListener {
+            isRecording = true
             if (binding.tapInputSwitch.isChecked) {
                 recordJob = scope.launch {
                     recordTaps()
@@ -90,15 +92,23 @@ class RecordFragment : Fragment() {
 
         //Initialize Bars to Record For button
         binding.numBar.setOnClickListener {
-            val bottomDialog = NumBarDialogFragment(binding.numBarVal)
-            bottomDialog.show(activity!!.supportFragmentManager, "Dialog")
+            if (!isRecording) {
+                val bottomDialog = NumBarDialogFragment(binding.numBarVal)
+                bottomDialog.show(activity!!.supportFragmentManager, "Dialog")
+            } else {
+                Toast.makeText(context, getString(R.string.cannot_edit), Toast.LENGTH_SHORT).show()
+            }
         }
         binding.numBarVal.text = context.barsToRecordFor.toString()
 
         //Initialize Beats Per Bar button
         binding.beatsPerBar.setOnClickListener {
-            val bottomDialog = BeatsPerBarDialogFragment(binding.beatsPerBarVal)
-            bottomDialog.show(activity!!.supportFragmentManager, "Dialog")
+            if(!isRecording) {
+                val bottomDialog = BeatsPerBarDialogFragment(binding.beatsPerBarVal)
+                bottomDialog.show(activity!!.supportFragmentManager, "Dialog")
+            } else {
+                Toast.makeText(context, getString(R.string.cannot_edit), Toast.LENGTH_SHORT).show()
+            }
         }
         binding.beatsPerBarVal.text = context.beatsInABar.toString()
 
@@ -150,6 +160,7 @@ class RecordFragment : Fragment() {
             val notes = audioProcessor.getNoteData()
             extendedContext.currentNoteData = notes
             extendedContext.recordedBpm = extendedContext.bpm
+            isRecording = false
             activity!!.runOnUiThread {
                 flipButtonVisibility(false)
                 showSuccessSnackbar()
@@ -158,6 +169,7 @@ class RecordFragment : Fragment() {
     }
 
     private fun cancel() {
+        isRecording = false
         recorder.stop()
         recordJob.cancel()
         metronomeJob.cancel()
@@ -231,7 +243,7 @@ class RecordFragment : Fragment() {
         val totalBeats = (extendedContext.beatsInABar * extendedContext.barsToRecordFor) * 4 //number of 16th notes recorded
         val bucketsFinal = buckets.drop(4).subList(0, totalBeats)
         Log.d(logTag, "BUTTON INPUT FINSIHED, BUCKETS: $bucketsFinal")
-
+        isRecording = false
         extendedContext.currentNoteData = bucketsFinal
         extendedContext.recordedBpm = extendedContext.bpm
     }
