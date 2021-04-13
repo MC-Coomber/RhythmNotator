@@ -8,7 +8,6 @@ import com.example.rhythmnotator.databinding.ActivityMainBinding
 import com.example.rhythmnotator.fragments.PlaybackFragment
 import com.example.rhythmnotator.fragments.RecordFragment
 import com.example.rhythmnotator.fragments.SavedRhythmsFragment
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val logTag = "MAIN ACTIVITY"

@@ -30,18 +30,17 @@ class PlaybackFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val context = activity!!.applicationContext as ExtendedContext
         playback = Playback(activity!!.applicationContext)
         var isPlaying = false
         binding.play.setOnClickListener {
-            val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
-                true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true)
             val onComplete = {
                 isPlaying = false
             }
 
             if (!isPlaying) {
                 isPlaying = true
-                playback.playRhythm(120, rhythm, onComplete)
+                playback.playRhythm(120, context.currentNoteData, onComplete)
 
             }
         }
@@ -69,11 +68,16 @@ class PlaybackFragment : Fragment() {
             noteRenderer.renderNoteData(context.currentNoteData, context.recordedBpm)
         }
 
-        val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
-            true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
-            true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
-            true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true,true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
-            true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true)
+        context.currentNoteData = arrayListOf(
+            true, false, false, false,
+            true, false, false, false,
+            true, false, true, false,
+            true, false, false, false,
+            true, false, true, false,
+            true, false, true, false,
+            false, false, true, false,
+            true, false, false, false
+        )
 
 
     }

@@ -13,7 +13,7 @@ class Playback(private val context: Context) {
     private val logTag = "PLAYBACK"
     private var isPlaying = true
 
-    fun playRhythm(bpm: Int, noteData: ArrayList<Boolean>, onComplete: () -> Unit) {
+    fun playRhythm(bpm: Int, noteData: List<Boolean>, onComplete: () -> Unit) {
         val sixteenthNoteLengthMillis = (60000 / bpm) / 4
         val soundPool: SoundPool = SoundPool.Builder()
             .setMaxStreams(1)
