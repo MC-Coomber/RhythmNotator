@@ -59,6 +59,7 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, barHeight)
             justifyContent = JustifyContent.SPACE_BETWEEN
             alignItems = AlignItems.BASELINE
+            setPadding(0 , 0, (density * 24).toInt(), 0)
         }
 
         val keySignature = ImageView(context)
@@ -137,15 +138,25 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
             layout.addView(bpmContainer)
         }
 
-        val parentLayout = LinearLayout(context)
-        parentLayout.addView(keySignatureLayout)
-
         //Draw the notes
         val quarterDivisions = bar.chunked(4)
         quarterDivisions.forEach {
             barLayout.addView(getNoteImage(it, barLayout))
         }
 
+        val barLine = LinearLayout(context)
+        val barLineParams = LinearLayout.LayoutParams((density * 1).toInt(), (density * 40).toInt())
+        barLineParams.apply {
+            leftMargin = (density * 360).toInt()
+            topMargin = (density * 28).toInt()
+        }
+        barLine.apply {
+            layoutParams = barLineParams
+            setBackgroundColor(Color.parseColor("#000000"))
+        }
+
+        val parentLayout = LinearLayout(context)
+        parentLayout.addView(keySignatureLayout)
         parentLayout.addView(barLayout)
 
         val baseLine = LinearLayout(context)
@@ -162,6 +173,7 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
         barFrameLayout.apply {
             addView(parentLayout)
             addView(baseLine)
+            addView(barLine)
             layoutParams = barFrameLayoutParams
         }
 
