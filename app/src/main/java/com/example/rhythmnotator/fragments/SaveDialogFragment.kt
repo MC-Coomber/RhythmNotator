@@ -36,10 +36,7 @@ class SaveDialogFragment : DialogFragment() {
             val fileName = binding.fileNameInput.text.toString()
             val bpm = context.bpm.toString()
             val beatsInABar = context.beatsInABar.toString()
-//            val rhythm = context.currentNoteData.joinToString(",")
-            val rhythm = arrayListOf(true, false, true, false, true, false, false, false, true, false, false, false ,true, false, false, false,
-                true, true, true, true, true, true, true, true, true, false, true, true ,true, false, true, true)
-
+            val rhythm = context.currentNoteData
 
             val fileContents = "$bpm;$beatsInABar;$rhythm"
             Log.d(logTag, "file contents: $fileContents")

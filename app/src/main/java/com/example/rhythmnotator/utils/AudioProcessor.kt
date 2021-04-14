@@ -29,20 +29,21 @@ class AudioProcessor (private val audioData: ShortArray, context: ExtendedContex
         val processedAudio = java.util.ArrayList<Int>()
 
         while(iterator < audioBuffer.size) {
+            //Find the absolute value of the sample
             var newSample = abs(audioBuffer[iterator].toInt())
+            //If enough samples have been looked at, find the average of the last 100
             if (iterator >= noAverageSamples) {
                 var total = newSample
                 for (i in 0..noAverageSamples) {
                     total += abs(audioBuffer[iterator - i].toInt())
                 }
                 newSample = total/noAverageSamples
-                processedAudio.add(iterator, newSample)
-            } else {
-                processedAudio.add(iterator, newSample)
             }
+            processedAudio.add(iterator, newSample)
+
             iterator++
         }
-        Log.d(logTag, String.format("Processed sound =  $processedAudio"))
+
         return processedAudio
     }
 
@@ -51,8 +52,8 @@ class AudioProcessor (private val audioData: ShortArray, context: ExtendedContex
         val sixteenthSampleLength = 15 * (sampleRate/bpm)
         val buckets = processedAudio.chunked(sixteenthSampleLength)
         val totalBeats = (beatsInABar * barsToRecordFor) * 4 //number of 16th notes recorded
-        return buckets.drop(4).subList(0, totalBeats)
 
+        return buckets.drop(4).subList(0, totalBeats)
     }
 
     //Converts buckets into boolean values where true is a note and false is a rest
@@ -60,7 +61,6 @@ class AudioProcessor (private val audioData: ShortArray, context: ExtendedContex
         val notes = ArrayList<Boolean>()
         for (bucket in buckets) {
             val average = bucket.average()
-            Log.d(logTag, "bucket: $average")
             notes.add(average > threshold)
         }
 

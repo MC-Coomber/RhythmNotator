@@ -67,19 +67,6 @@ class PlaybackFragment : Fragment() {
         } else {
             noteRenderer.renderNoteData(context.currentNoteData, context.recordedBpm)
         }
-
-        context.currentNoteData = arrayListOf(
-            true, false, false, false,
-            true, false, false, false,
-            true, false, true, false,
-            true, false, false, false,
-            true, false, true, false,
-            true, false, true, false,
-            false, false, true, false,
-            true, false, false, false
-        )
-
-
     }
 
     override fun onPause() {
