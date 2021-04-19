@@ -28,4 +28,6 @@
     <string name="no_rhythm_msg">Rhythms that you record will be displayed here. To record a rhythm, go to the record tab.</string>
     <string name="app_title">Rhythm Notator</string>
     <string name="cannot_edit">Cannot change while recording</string>
+    <string name="rhytm_used_error">Rhythm name has already been used</string>
+    <string name="reserved_characters_error">Rhythm name cannot contain reserved characters</string>
 </resources>
