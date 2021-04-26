@@ -40,7 +40,7 @@ class PlaybackFragment : Fragment() {
 
             if (!isPlaying) {
                 isPlaying = true
-                playback.playRhythm(120, context.currentNoteData, onComplete)
+                playback.playRhythm(context.recordedBpm, context.currentNoteData, onComplete)
 
             }
         }
