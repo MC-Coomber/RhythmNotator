@@ -54,12 +54,12 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
     private fun renderBar(bar: List<Boolean>, isFirstBar: Boolean, bpm: Int): FrameLayout {
         val barLayout = FlexboxLayout(context)
         val density = barLayout.context.resources.displayMetrics.density
-        val barHeight = (60 * density).toInt()
+        val barHeight = (75 * density).toInt()
         barLayout.apply {
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, barHeight)
             justifyContent = JustifyContent.SPACE_BETWEEN
             alignItems = AlignItems.BASELINE
-            setPadding(0 , 0, (density * 24).toInt(), 0)
+            setPadding(0 , 0, (density * 12).toInt(), 0)
         }
 
         val keySignature = ImageView(context)
@@ -141,7 +141,7 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
         //Draw the notes
         val quarterDivisions = bar.chunked(4)
         quarterDivisions.forEach {
-            barLayout.addView(getNoteImage(it, barLayout))
+            barLayout.addView(getNoteImage(it, barLayout, barHeight))
         }
 
         val barLine = LinearLayout(context)
@@ -180,11 +180,11 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
         return barFrameLayout
     }
 
-    private fun getNoteImage(note: List<Boolean>, layout: FlexboxLayout): ImageView {
+    private fun getNoteImage(note: List<Boolean>, layout: FlexboxLayout, barHeight: Int): ImageView {
         val image = ImageView(context)
         val density = layout.context.resources.displayMetrics.density
-        val params = LinearLayout.LayoutParams(WRAP_CONTENT, (density * 60).toInt())
-//        params.marginEnd = (8 * density).toInt()
+        var params = LinearLayout.LayoutParams((density * 250).toInt(), barHeight)
+
         image.layoutParams = params
         val imageResource = noteMap[note] ?: error("CANNOT FIND GIVEN NOTE")
         image.setImageResource(imageResource)

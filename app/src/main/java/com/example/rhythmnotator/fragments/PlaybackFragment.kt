@@ -60,6 +60,33 @@ class PlaybackFragment : Fragment() {
         val noteRenderer = NoteRenderer(binding.noteHolder, activity!!.applicationContext)
         val context = activity!!.applicationContext as ExtendedContext
 
+//        context.currentNoteData = arrayListOf(
+//            true, false, false, false,
+//            true, false, false, false,
+//            true, false, false, false,
+//            true, false, false, false,
+//
+//            false, false, false, true,
+//            false, false, true, false,
+//            false, false, true, true,
+//            false, true, false, false,
+//
+//            false, true, false, true,
+//            false, true, true, false,
+//            false, true, true, true,
+//            true, false, false, false,
+//
+//            true, false, false, true,
+//            true, false, true, false,
+//            true, false, true, true,
+//            true, true, false, false,
+//
+//            true, true, false, true,
+//            true, true, true, false,
+//            true, true, true, true
+//        )
+
+
         if (context.currentNoteData.isEmpty()) {
             binding.noteHolder.visibility = GONE
             binding.playbackButtonHolder.visibility = GONE
