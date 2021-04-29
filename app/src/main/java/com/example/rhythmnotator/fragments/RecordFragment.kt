@@ -194,7 +194,7 @@ class RecordFragment : Fragment() {
         val snackbar = Snackbar.make(binding.recordParent, "Recording finished", Snackbar.LENGTH_LONG)
             .setAction(R.string.view) {
                 val activity = activity as MainActivity
-                activity.switchFragment(R.id.playback_item)
+                activity.switchToPlayback()
             }
         snackbar.show()
     }
