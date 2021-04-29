@@ -183,7 +183,7 @@ class NoteRenderer (private val layout: LinearLayout, private val context: Conte
     private fun getNoteImage(note: List<Boolean>, layout: FlexboxLayout, barHeight: Int): ImageView {
         val image = ImageView(context)
         val density = layout.context.resources.displayMetrics.density
-        var params = LinearLayout.LayoutParams((density * 250).toInt(), barHeight)
+        var params = LinearLayout.LayoutParams(WRAP_CONTENT, barHeight)
 
         image.layoutParams = params
         val imageResource = noteMap[note] ?: error("CANNOT FIND GIVEN NOTE")
